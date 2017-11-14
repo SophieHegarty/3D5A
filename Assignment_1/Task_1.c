@@ -1,8 +1,8 @@
 //
-//  Task_1.c
-//  Assignment_1_1
+//  Task_10000.c
+//  Assignment_2
 //
-//  Created by Sophie Hegarty on 26/10/2017.
+//  Created by Sophie Hegarty on 13/11/2017.
 //  Copyright © 2017 Sophie Hegarty. All rights reserved.
 //
 
@@ -12,186 +12,143 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#define MAX_STRING_SIZE 50 //max length of a string
-#define ARRAY_SIZE 211  //best be prime
+#define arraySize 6
 
-typedef struct  Element Element;
-struct Element
-{
-    char name[MAX_STRING_SIZE];
-    int count;
-};
+int compareCount = 0;
+int swapCount = 0;
 
-struct Element* hashTable[ARRAY_SIZE];
 
-int hash(char* s){
-    int hash = 0;
-    while(*s)
-    {
-        hash = (hash + *s) % ARRAY_SIZE;
-        s++;
+
+// A utility function to swap two elements
+void swap(int *x,int *y){
+    int temp;
+    if(*x =! *y){
+    temp = *x;
+    *x = *y;
+    *y = temp;
+    swapCount++;
+        printf("Swapped %d %d \n", *x, *y);
     }
-    return hash;
+        printf("No Swapp %d %d \n", *x, *y);
+
 }
 
-
-void createElement(char* name, int position){
-    struct Element *new = (Element*)malloc(sizeof(Element)); //allocate new memory for element
-    strcpy(new -> name, name); //copy name that is passed through to the 'new' name in the struct
-    new -> count = 1; //set count to 1 as name occurs once for now
-    hashTable[position] = new;  //place the name into the postion on the hastable acccording to hashno
+char checkSort(int array[], int SIZE){
+    int sortCheck = -1;
+    char s;
+    
+    for(int i = 0; i < SIZE-1 ; i++){
+        if(array[i] <= array[i+1]){
+            sortCheck = 0;
+        }
+        else{
+            sortCheck = 1;
+        }
+    } 
+    if(sortCheck == 0){
+         s = 'Y';
+    }
+    else{
+        s = 'N';
+    }
+    return s;
 }
 
-void initialiseArray(){ // initialoze array
+/* Function to print an array */
+void printArray(int arr[], int size){
     int i;
-    char* dummy_name = "\0"; //dummy variable, set it to NULL
+    for (i=0; i < size; i++)
+        printf("%d ", arr[i]);
+        printf("\n");
+
+}
+
+//Lomuto partition 
+int partition (int arr[], int low, int high){ //uses last number as pivot{
+    int pivot = arr[high];    // pivot
+    int i = (low - 1);  // Index of smaller element
     
-    for(i=0; i<ARRAY_SIZE; i++) //loop thorugh
+    for (int j = low; j <= high- 1; j++){
+        // If current element is smaller than or
+        // equal to pivot
+        if (arr[j] <= pivot){
+            compareCount++;
+            i++;    // increment index of smaller element
+            printf("Inside partition_1_1");
+            swap(&arr[i], &arr[j]);
+            printArray(arr, arraySize);
+        }
+
+        printf("Inside partition_1");
+        printArray(arr, arraySize);
+        compareCount++;
+    }
+
+    swap(&arr[i + 1], &arr[high]); //swap pivot and value after largest value smaller than pivot
+    printf("Inside partition_2");
+    printArray(arr, arraySize);
+    char s = checkSort(arr, arraySize);
+
+    return (i+1); // return place where pivot was placed
+}
+
+
+
+/* The main function that implements QuickSort
+ arr[] --> Array to be sorted,
+ low  --> Starting index,
+ high  --> Ending index */
+void quickSort(int arr[], int low, int high){
+    if (low < high)
     {
-        createElement(dummy_name,i); //set all buckets to null, within the arraysize
-        hashTable[i]->count = 0; //set
+        int partition_1 = partition(arr, low, high);
+        printf("Inside quicksort");
+        printArray(arr, arraySize);
+        
+        // Separately sort elements before
+        // partition and after partition, recurssively do each side
+        quickSort(arr, low, partition_1 - 1);
+        quickSort(arr, partition_1 + 1, high);
     }
 }
 
 
-int collisions = 0; //gloabl variable for no. of collisions
+void display(int array[], char test[], int SIZE){
+    quickSort(array, 0, SIZE);
+    printArray(array, SIZE);
 
+    char sortCheck = checkSort(array, arraySize);
 
-int search(char* name, int *key){
-    int value = -1; //bool to be returned
-    int i;  //dummy variable
-    int hashNumber = hash(name); //get hash number
-    
-    if(strcmp(hashTable[hashNumber]->name, name) == 0){ //if search name == name in bucket return 1
-        
-        *key = hashNumber; //set key/index to hashNumber
-        value = 1;
-    }
-    else if(strcmp(hashTable[hashNumber]->name , "\0") == 0){ //if NULL in bucket return 0
-        
-        *key = hashNumber; //set key/index to hashNumber
-        value = 0;
-    }
-    else{
-        i = hashNumber;
-        while(strcmp(hashTable[i]->name, "\0") != 0){ //while name isn't NULL value --- collisions -----
-            
-            i++; //increase hash by 1 and try again
-            collisions++; //increase collision number by 1
-            if(i == ARRAY_SIZE){ //if reached end of array, start at hashtable[0]
-                i = 0;
-            }
-        }
-        *key = i;
-        value = 0;
-    }
-    return value;
-}
-
-int next_field(FILE *csv, char *buffer, int max_length){
-    char current = fgetc(csv);  //get character from the csv file, set as current character
-    int i = 0;
-    int value;
-    bool quote;
-    
-    
-    if(current == '"'){
-        quote = true;
-    }else
-    {
-        quote = false;}
-    
-    while(current != EOF && current != ',' && current != '\n' && quote == false){
-        buffer[i] = current;
-        current = fgetc(csv);
-        i++;
-    }
-    
-    if(quote == true && current == ','){
-        buffer[i] = current;
-        current = fgetc(csv);
-        i++;
-    }
-    else if(current == ',' && quote != true){    //if curretn character = , then but 0 in buffer and return 0
-        buffer[i] = '\0';
-        value = 0;
-    }
-    else if(current == '\n' || current == EOF){   //if current character = new line, load 0 into buffer and return 1
-        buffer[i] = '\0';
-        value = 1;
-    }
-    return value;
-    
+    printf("TEST : %s\n" , test);
+    printf("Sorted: %c\n", sortCheck);
+    printf("SWAPS: %i\n", swapCount);
+    printf("COMPARES: %i\n", compareCount);
 }
 
 
-int  main ( int argc , char *argv[] )
-{
-    FILE *csv_file;
-    csv_file = fopen("names.csv", "r");  //read in csv file
-    //char data[1024];     //array storing data
-    char buffer[MAX_STRING_SIZE];
-    int position;
-    initialiseArray(); //set all counts to 0 and names to NULL
-    int term = 0;
+int main( int argc , char *argv[]){
+
+    int arr_URV[] = {4, 3, 5, 1, 0, 2};
+    int arr_RV[] = {3, 3, 2, 1, 1, 4};
+    int arr_ASL[] = {0, 1, 2, 3, 4, 5};
+    int arr_DSL[] = {5, 4, 3, 2, 1, 0};
+    int arr_UL[] = {3, 3, 3, 3, 3, 3};
     
-    while ( !feof(csv_file) ){
-        next_field(csv_file, buffer, MAX_STRING_SIZE);
-        term++;
-        
-       /* if(strcmp(hashTable[hashNumber]->name, name) == 0){ //if search name == name in bucket return 1
-        
-        *key = hashNumber; //set key/index to hashNumber
-        value = 1;
-    }
-    else if(strcmp(hashTable[hashNumber]->name , "\0") == 0){ //if NULL in bucket return 0
-        
-        *key = hashNumber; //set key/index to hashNumber
-        value = 0;
-    }
-    else{
-        i = hashNumber;
-        while(strcmp(hashTable[i]->name, "\0") != 0){ //while name isn't NULL value --- collisions -----
-            
-            i++; //increase hash by 1 and try again
-            collisions++; //increase collision number by 1
-            if(i == ARRAY_SIZE){ //if reached end of array, start at hashtable[0]
-                i = 0;
-            }
-        }
-        *key = i;
-        value = 0;
-    }*/
-        if(search(buffer, &position)){ //if search = 1, increase count but dont replicate data
-            hashTable[position]->count = hashTable[position]->count + 1; //increase count by 1
-        }
-        
-        else{ //else, but name in new element
-            createElement(buffer, position);
-            
-        }
-    }
-    fclose(csv_file); 
-    float load = ((float)term / ARRAY_SIZE)*100;
+    /*quickSort(arr_URV, 0, arraySize);
+    printArray(arr_URV, arraySize);
+
+    char sortCheck = checkSort(arr_URV, arraySize);
+
+    printf("TEST : URV\n" );
+    printf("Sorted: %c\n", sortCheck);
+    printf("SWAPS: %i\n", swapCount);
+    printf("COMPARES: %i\n", compareCount);*/
+    printArray(arr_URV, arraySize);
+    display(arr_URV, "UniqueRandomValues",  arraySize);
+   // display(arr_RV, "RandomValues", arraySize);
+    //display(arr_ASL, "AscendingSortedList", arraySize);
+    //display(arr_DSL, "DescendingSortedList",  arraySize);
+   // display(arr_UL, "UniformList", arraySize);
     
-    printf("Number of Collisions: %i\n", collisions);
-    printf("Load in percent: %f\n", load);
-    printf("Type stop to exit program.\n");
-    
-    
-    while(strcmp(buffer, "stop") != 0){ // while word entered doesn't = stop
-        printf("Enter name: ");
-        scanf("%s", buffer); //add name to buffer array
-        
-        if(search(buffer, &position)){ //if search = 1, print count
-            printf(">>>Name: %s\n>>>Count: %i\n", hashTable[position] -> name, hashTable[position]->count);
-            
-        }
-        else if(strcmp(buffer, "stop") != 0){
-            printf(">>>%s not found.\n", buffer); //else print not found
-            
-        }
-    }
-    
-    return  0;
+    return 0;
 }
