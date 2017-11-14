@@ -12,13 +12,13 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#define arraySize 10
+#define arraySize 10000
 
 int compareCount = 0;
 int swapCount = 0;
 int DEBUG = 0;  //controls debug messages debug on if = 1; off if = 0
 
-/////////////////////////// FILL ARRAYS /////////////////////
+/////////////////////////// FILL ARRAYS /////////////////////////
 void shuffle(int *arr, size_t n){
     if (n > 1) 
     {
@@ -189,7 +189,9 @@ void quickSort(int arr[], int low, int high){
 
 void display(int array[], char test[], int SIZE){
     quickSort(array, 0, (SIZE-1));
-    printArray(array, SIZE);
+    if(DEBUG == 1){
+        printArray(array, SIZE);
+    }
 
     char sortCheck = checkSort(array, arraySize);
 
