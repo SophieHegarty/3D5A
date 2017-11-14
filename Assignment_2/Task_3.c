@@ -1,5 +1,5 @@
 //
-//  Task_10000.c
+//  Task_3.c
 //  Assignment_2
 //
 //  Created by Sophie Hegarty on 13/11/2017.
@@ -9,198 +9,71 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <stdbool.h>
 
-#define arraySize 6
+#define MAX_BUFFER 256 // Maximum string length this program can handle
 
-int compareCount = 0;
-int swapCount = 0;
-int DEBUG = 0;  //controls debug messages debug on if = 1; off if = 0
-
-typedef struct  Game Game;
 struct Game {
-    char Title;
-    char Platform;
-    int Score;
-    int releaseYear;
-    
+	int score, releaseYear;
+	char title[MAX_BUFFER], platform[MAX_BUFFER];
 };
 
-
-
-// A utility function to swap two elements
-void swap(int *x,int *y){
-    int temp;
-    if(*x != *y){ //if values are the same DONT swap!!!!!!!!!!!!!!!
-    temp = *x;
-    *x = *y;
-    *y = temp;
-    swapCount++;
-
-        if(DEBUG == 1){
-            printf("Swapped %d %d \n", *x, *y);
-        }
-    }
-    if(DEBUG == 1){
-       printf("No Swapp %d %d \n", *x, *y);
-    }
-
-}
-
-char checkSort(int array[], int SIZE){
-    int sortCheck = -1;
-    char s;
-    
-    for(int i = 0; i < SIZE-1 ; i++){
-        if(array[i] <= array[i+1]){
-            sortCheck = 0;
-        }
-        else{
-            sortCheck = 1;
-        }
-    } 
-    if(sortCheck == 0){
-         s = 'Y';
-    }
-    else{
-        s = 'N';
-    }
-    return s;
-}
-
-/* Function to print an array */
-void printArray(int arr[], int size){
-    int i;
-    for (i=0; i < size; i++)
-        printf("%d ", arr[i]);
-        printf("\n");
-
-}
-
-//Lomuto partition 
-int partition (int arr[], int low, int high){ //uses last number as pivot{
-    int pivot = arr[high];    // pivot
-    int i = (low - 1);  // Index of smaller element
-    
-    for (int j = low; j <= (high - 1); j++){
-        // If current element is smaller than or
-        // equal to pivot
-        if (arr[j] <= pivot){
-            compareCount++;
-            i++;    // increment index of smaller element
-
-
-            swap(&arr[i], &arr[j]);
-
-            if(DEBUG == 1){
-                printf("Inside partition_1_1");
-                printArray(arr, arraySize);
-            }
-        }
-
-        if(DEBUG == 1){
-            printf("Inside partition_1");
-            printArray(arr, arraySize);
-        }
-        compareCount++;
-    }
-
-    swap(&arr[i + 1], &arr[high]); //swap pivot and value after largest value smaller than pivot
-    if(DEBUG == 1){
-        printf("Inside partition_2");
-        printArray(arr, arraySize);
-    }
-    char s = checkSort(arr, arraySize);
-
-    return (i+1); // return place where pivot was placed
-}
-
-
-
-/* The main function that implements QuickSort
- arr[] --> Array to be sorted,
- low  --> Starting index,
- high  --> Ending index */
-void quickSort(int arr[], int low, int high){
-    if (low < high)
-    {
-        int partition_1 = partition(arr, low, high);
-
-        if(DEBUG == 1){
-            printf("Inside quicksort");
-            printArray(arr, arraySize);
-        }
-
-        // Separately sort elements before
-        // partition and after partition, recurssively do each side
-        quickSort(arr, low, partition_1 - 1);
-        quickSort(arr, partition_1 + 1, high);
-    }
-}
-
-
-void display(int array[], char test[], int SIZE){
-    quickSort(array, 0, (SIZE-1));
-    printArray(array, SIZE);
-
-    char sortCheck = checkSort(array, arraySize);
-
-    printf("TEST : %s\n" , test);
-    printf("Sorted: %c\n", sortCheck);
-    printf("SWAPS: %i\n", swapCount);
-    printf("COMPARES: %i\n", compareCount);
-    swapCount = 0;
-    compareCount = 0;
-}
-
-// Reads strings of alpha numeric characters from input file. Truncates strings which are too long to string_max-1
-void next_token ( char *buf, FILE *f, int string_max ) {
-	// start by skipping any characters we're not interested in
-	buf[0] = fgetc(f);
-	while ( !isalnum(buf[0]) && !feof(f) ) { buf[0] = fgetc(f); }
-	// read string of alphanumeric characters
-	int i=1;
-	for (;;) {
-		buf[i] = fgetc(f);                // get next character from file
-		if( !isalnum(buf[i]) ) { break; } // only load letters and numbers
-		if( feof(f) ) { break; }          // file ended?
-		if( i < (string_max-1) ) { ++i; } // truncate strings that are too long
-	}
-	buf[i] = '\0'; // NULL terminate the string
-}
-
-
-//  Reads the contents of a file and adds them to the hash table - returns 1 if file was successfully read and 0 if not.
-int load_file ( char *fname ) {
-	FILE *f;
-	char buf[MAX_STRING_SIZE];
-
-	// boiler plate code to ensure we can open the file
-	f = fopen(fname, "r");
-	if (!f) { 
-		printf("Unable to open %s\n", fname);
-		return 0; 
-	}
+// The CSV parser
+int
+next_field( FILE *f, char *buf, int max ) {
+	int i=0, end=0, quoted=0;
 	
-	// read until the end of the file
-	while ( !feof(f) ) {
-		next_token(buf, f, MAX_STRING_SIZE);
-		addOrIncrement( buf);                           //here you call your function from above!
+	for(;;) {
+		// fetch the next character from file		
+		buf[i] = fgetc(f);
+		// if we encounter quotes then flip our state and immediately fetch next char
+		if(buf[i]=='"') { quoted=!quoted; buf[i] = fgetc(f); }
+		// end of field on comma if we're not inside quotes
+		if(buf[i]==',' && !quoted) { break; }
+		// end record on newline or end of file
+		if(feof(f) || buf[i]=='\n') { end=1; break; } 
+		// truncate fields that would overflow the buffer
+		if( i<max-1 ) { ++i; } 
 	}
 
-	// always remember to close your file stream
-	fclose(f);
-
-	return 1;
+	buf[i] = 0; // null terminate the string
+	return end; // flag stating whether or not this is end of the line
 }
 
+// Stuff to make life a bit neater in main
+void fetch_game( FILE *csv, struct Game *g ) {
+	char buf[MAX_BUFFER];
 
-int main( int argc , char *argv[]){
+    next_field( csv, g->title, MAX_BUFFER );  // name and type are just strings so read
+    next_field( csv, g->platform, MAX_BUFFER );  // name and type are just strings so read
+	next_field( csv, buf, MAX_BUFFER );      // load id into buffer as string
+	g->score = atoi(buf);                       // then parse to integer
+    next_field( csv, buf, MAX_BUFFER );      // load id into buffer as string
+	g->releaseYear = atoi(buf);   
 
-    Game buffer[arraySize];
+}
+
+void print_game( struct Game *g ) {
+	printf("  %s %s %i %i\n", g->title, g->platform, g->score, g->releaseYear );
+
+}
+
+int
+main ( int argc, char *argv[] ) {
+	FILE *f;		
+	struct Game g;
+    f = fopen("truncated.csv", "r");
 
 
-    
-    return 0;
+	//fetch_game( f, &g ); // discard the header data in the first line
+
+	// Now read and print pokemon until the end of the file
+	while(!feof(f)) {
+		fetch_game( f, &g );
+		print_game( &g );
+		printf("\n");
+	}
+
+	// Always remember to close the file
+	fclose(f);
+	return EXIT_SUCCESS;
 }
