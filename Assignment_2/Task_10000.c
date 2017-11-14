@@ -38,19 +38,42 @@ void fill_URV(int array[]){
      for (int i = 0; i < arraySize; i++){
         array[i] = i;
     }
-    shuffle(array, 10);
+    shuffle(array, arraySize);
 }
 
 void fill_RV(int array[]){
      srand(0); //set seed value
 
     for (int i = 0; i < arraySize; i++) {
-        array[i] = rand();
+        array[i] = rand()%100;
     }
 }
 
+void fill_ASL(int array[]){
+    srand(0); //set seed value
 
+    for (int i = 0; i < arraySize; i++) {
+        array[i] = i;
+    }
+}
 
+void fill_DSL(int array[]){
+    //srand(0); //set seed value
+
+    for (int i = arraySize; i >= 0; i--) {
+        array[i] = i;
+    }
+}
+
+void fill_UL(int array[]){
+         srand(0); //set seed value
+         int num = rand();
+
+    for (int i = 0; i < arraySize; i++) {
+        //array[i] = num;
+        array[i] = 8;
+    }
+}
 
 
 // A utility function to swap two elements
@@ -170,9 +193,9 @@ void display(int array[], char test[], int SIZE){
 
     char sortCheck = checkSort(array, arraySize);
 
-    printf("TEST : %s\n" , test);
-    printf("Sorted: %c\n", sortCheck);
-    printf("SWAPS: %i\n", swapCount);
+    printf("TEST:     %s\n" , test);
+    printf("SORTED:   %c\n", sortCheck);
+    printf("SWAPS:    %i\n", swapCount);
     printf("COMPARES: %i\n", compareCount);
     swapCount = 0;
     compareCount = 0;
@@ -181,35 +204,27 @@ void display(int array[], char test[], int SIZE){
 
 int main( int argc , char *argv[]){
 
-    int arr_URV[] = {4, 3, 5, 1, 0, 2};
-    int arr_RV[] = {3, 3, 2, 1, 1, 4};
-    int arr_ASL[] = {0, 1, 2, 3, 4, 5};
-    int arr_DSL[] = {5, 4, 3, 2, 1, 0};
-    int arr_UL[] = {3, 3, 3, 3, 3, 3};
+    int arr_URV[arraySize];
+    int arr_RV[arraySize];
+    int arr_ASL[arraySize];
+    int arr_DSL[arraySize];
+    int arr_UL[arraySize];
     
-    /*quickSort(arr_URV, 0, arraySize);
-    printArray(arr_URV, arraySize);
-
-    char sortCheck = checkSort(arr_URV, arraySize);
-
-    printf("TEST : URV\n" );
-    printf("Sorted: %c\n", sortCheck);
-    printf("SWAPS: %i\n", swapCount);
-    printf("COMPARES: %i\n", compareCount);*/
+    fill_URV(arr_URV);
+    fill_RV(arr_RV);
+    fill_ASL(arr_ASL);
+    fill_DSL(arr_DSL);
+    fill_UL(arr_UL);
 
     if(DEBUG == 1){
         printArray(arr_URV, arraySize);
     }
 
-    //display(arr_URV, "UniqueRandomValues",  arraySize);
-    //display(arr_RV, "RandomValues", arraySize);
-    //display(arr_ASL, "AscendingSortedList", arraySize);
-    //display(arr_DSL, "DescendingSortedList",  arraySize);
-    //display(arr_UL, "UniformList", arraySize);
-
-    int array[arraySize];
-    fill_URV(array);
-    printArray(array, arraySize);
+    display(arr_URV, "UniqueRandomValues",  arraySize);
+    display(arr_RV, "RandomValues", arraySize);
+    display(arr_ASL, "AscendingSortedList", arraySize);
+    display(arr_DSL, "DescendingSortedList",  arraySize);
+    display(arr_UL, "UniformList", arraySize);
 
     return 0;
 }
