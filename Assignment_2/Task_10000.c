@@ -12,93 +12,204 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#define compareCount = 0;
-#define swapCount = 0;
+#define arraySize 10
+
+int compareCount = 0;
+int swapCount = 0;
+int DEBUG = 0;  //controls debug messages debug on if = 1; off if = 0
+
+/////////////////////////// FILL ARRAYS /////////////////////
+void shuffle(int *arr, size_t n){
+    if (n > 1) 
+    {
+        size_t i;
+        srand(time(NULL)); //set seed value
+        for (i = 0; i < n - 1; i++) 
+        {
+          size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
+          int t = arr[j];
+          arr[j] = arr[i];
+          arr[i] = t;
+        }
+    }
+}
+
+void fill_URV(int array[]){
+     for (int i = 0; i < arraySize; i++){
+        array[i] = i;
+    }
+    shuffle(array, 10);
+}
+
+void fill_RV(int array[]){
+     srand(0); //set seed value
+
+    for (int i = 0; i < arraySize; i++) {
+        array[i] = rand();
+    }
+}
+
+
+
+
 
 // A utility function to swap two elements
-void swap(int *x,int *y)
-{
+void swap(int *x,int *y){
     int temp;
+    if(*x != *y){ //if values are the same DONT swap!!!!!!!!!!!!!!!
     temp = *x;
     *x = *y;
     *y = temp;
-    //swapCount++
+    swapCount++;
+
+        if(DEBUG == 1){
+            printf("Swapped %d %d \n", *x, *y);
+        }
+    }
+    if(DEBUG == 1){
+       printf("No Swapp %d %d \n", *x, *y);
+    }
+
 }
 
+char checkSort(int array[], int SIZE){
+    int sortCheck = -1;
+    char s;
+    
+    for(int i = 0; i < SIZE-1 ; i++){
+        if(array[i] <= array[i+1]){
+            sortCheck = 0;
+        }
+        else{
+            sortCheck = 1;
+        }
+    } 
+    if(sortCheck == 0){
+         s = 'Y';
+    }
+    else{
+        s = 'N';
+    }
+    return s;
+}
 
-int partition (int arr[], int low, int high) //uses last number as pivot
-{
+/* Function to print an array */
+void printArray(int arr[], int size){
+    int i;
+    for (i=0; i < size; i++)
+        printf("%d ", arr[i]);
+        printf("\n");
+
+}
+
+//Lomuto partition 
+int partition (int arr[], int low, int high){ //uses last number as pivot{
     int pivot = arr[high];    // pivot
     int i = (low - 1);  // Index of smaller element
     
-    for (int j = low; j <= high- 1; j++)
-    {
+    for (int j = low; j <= (high - 1); j++){
         // If current element is smaller than or
         // equal to pivot
-        if (arr[j] <= pivot)
-        {
+        if (arr[j] <= pivot){
             compareCount++;
             i++;    // increment index of smaller element
+
+
             swap(&arr[i], &arr[j]);
+
+            if(DEBUG == 1){
+                printf("Inside partition_1_1");
+                printArray(arr, arraySize);
+            }
+        }
+
+        if(DEBUG == 1){
+            printf("Inside partition_1");
+            printArray(arr, arraySize);
         }
         compareCount++;
     }
+
     swap(&arr[i + 1], &arr[high]); //swap pivot and value after largest value smaller than pivot
-    return (i + 1); // return place where pivot was placed
+    if(DEBUG == 1){
+        printf("Inside partition_2");
+        printArray(arr, arraySize);
+    }
+    char s = checkSort(arr, arraySize);
+
+    return (i+1); // return place where pivot was placed
 }
+
+
 
 /* The main function that implements QuickSort
  arr[] --> Array to be sorted,
  low  --> Starting index,
  high  --> Ending index */
-void quickSort(int arr[], int low, int high)
-{
+void quickSort(int arr[], int low, int high){
     if (low < high)
     {
         int partition_1 = partition(arr, low, high);
-        
+
+        if(DEBUG == 1){
+            printf("Inside quicksort");
+            printArray(arr, arraySize);
+        }
+
         // Separately sort elements before
-        // partition and after partition
+        // partition and after partition, recurssively do each side
         quickSort(arr, low, partition_1 - 1);
         quickSort(arr, partition_1 + 1, high);
     }
 }
 
-/* Function to print an array */
-void printArray(int arr[], int size)
-{
-    int i;
-    for (i=0; i < size; i++)
-        printf("%d ", arr[i]);
-    printf("n");
-}
 
-void display(int array[], char test[], char sort, int swap, int compare, int SIZE){
-    quickSort(array, 0, SIZE);
+void display(int array[], char test[], int SIZE){
+    quickSort(array, 0, (SIZE-1));
     printArray(array, SIZE);
-    
-    printf("TEST : %s\n", test);
-    //printf("Sorted: %c\n", sort);
-    //printf("SWAPS: %i\n", swap);
-    printf("COMPARES: %i\n", compare);
+
+    char sortCheck = checkSort(array, arraySize);
+
+    printf("TEST : %s\n" , test);
+    printf("Sorted: %c\n", sortCheck);
+    printf("SWAPS: %i\n", swapCount);
+    printf("COMPARES: %i\n", compareCount);
+    swapCount = 0;
+    compareCount = 0;
 }
 
 
-int main()
-{
-    int SIZE = 10;
-    int arr_URV[] = {10, 7, 8, 9, 1, 5, 12, 15, 3, 11};
-    int arr_RV[] = {10, 7, 8, 9, 7, 5, 10, 15, 3, 11};
-    int arr_ASL[] = {0, 1, 3, 5, 7, 9, 11, 13, 15, 17};
-    int arr_DSL[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-    int arr_UL[] = {7, 7, 7, 7, 7, 7, 7, 7, 7, 7};
+int main( int argc , char *argv[]){
+
+    int arr_URV[] = {4, 3, 5, 1, 0, 2};
+    int arr_RV[] = {3, 3, 2, 1, 1, 4};
+    int arr_ASL[] = {0, 1, 2, 3, 4, 5};
+    int arr_DSL[] = {5, 4, 3, 2, 1, 0};
+    int arr_UL[] = {3, 3, 3, 3, 3, 3};
     
-    //quickSort(arr, 0, SIZE);
-    //printArray(arr, SIZE);
-    display(arr_URV, "UniqueRandomValues", "y", swapCount, compareCount, 10);
-    display(arr_RV, "RandomValues", swapCount, "y", swapCount, compareCount, 10);
-    display(arr_ASL, "AscendingSortedList", "y", swapCount, compareCount, 10);
-    display(arr_DSL, "DescendingSortedList", "y", swapCount, compareCount, 10);
-    display(arr_UL, "UniformList", "y", swapCount, compareCount, 10);
+    /*quickSort(arr_URV, 0, arraySize);
+    printArray(arr_URV, arraySize);
+
+    char sortCheck = checkSort(arr_URV, arraySize);
+
+    printf("TEST : URV\n" );
+    printf("Sorted: %c\n", sortCheck);
+    printf("SWAPS: %i\n", swapCount);
+    printf("COMPARES: %i\n", compareCount);*/
+
+    if(DEBUG == 1){
+        printArray(arr_URV, arraySize);
+    }
+
+    //display(arr_URV, "UniqueRandomValues",  arraySize);
+    //display(arr_RV, "RandomValues", arraySize);
+    //display(arr_ASL, "AscendingSortedList", arraySize);
+    //display(arr_DSL, "DescendingSortedList",  arraySize);
+    //display(arr_UL, "UniformList", arraySize);
+
+    int array[arraySize];
+    fill_URV(array);
+    printArray(array, arraySize);
+
     return 0;
 }
