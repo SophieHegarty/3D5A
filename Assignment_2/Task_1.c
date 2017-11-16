@@ -128,6 +128,7 @@ void quickSort(int arr[], int low, int high){
 void display(int array[], char test[], int SIZE){
     quickSort(array, 0, (SIZE-1));
     printArray(array, SIZE);
+    char s;
 
     int sortCheck = checkSort(array, arraySize);
     
