@@ -73,9 +73,8 @@ void swap(int *x,int *y){
 
 }
 
-char checkSort(int array[], int SIZE){
+int checkSort(int array[], int SIZE){
     int sortCheck = -1;
-    char s;
     
     for(int i = 0; i < SIZE-1 ; i++){
         if(array[i] <= array[i+1]){
@@ -85,13 +84,8 @@ char checkSort(int array[], int SIZE){
             sortCheck = 1;
         }
     } 
-    if(sortCheck == 0){
-         s = 'Y';
-    }
-    else{
-        s = 'N';
-    }
-    return s;
+    
+    return sortCheck;
 }
 
 /* Function to print an array */
@@ -171,7 +165,14 @@ void quickSort(int arr[], int low, int high){
         printArray(array, SIZE);
     }
 
-    char sortCheck = checkSort(array, arraySize);
+    int sortCheck = checkSort(array, arraySize);
+    char s;
+    if(sortCheck == 0){
+         s = 'Y';
+    }
+    else{
+        s = 'N';
+    }
 
     printf("TEST:     %s\n" , test);
     printf("SORTED:   %c\n", sortCheck);
