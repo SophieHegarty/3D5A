@@ -107,9 +107,8 @@ void selectionSort(int arr[]){
 	}
 }
 
-char checkSort(int array[], int SIZE){
+int checkSort(int array[], int SIZE){
     int sortCheck = -1;
-    char s;
     
     for(int i = 0; i < SIZE-1 ; i++){
         if(array[i] <= array[i+1]){
@@ -119,13 +118,8 @@ char checkSort(int array[], int SIZE){
             sortCheck = 1;
         }
     } 
-    if(sortCheck == 0){
-         s = 'Y';
-    }
-    else{
-        s = 'N';
-    }
-    return s;
+    
+    return sortCheck;
 }
 
 /* Function to print an array */
@@ -143,11 +137,17 @@ void display(int array[], char test[]){
         printArray(array, arraySize);
     }
     //printArray(array, arraySize);
-
-    char sortCheck = checkSort(array, arraySize);
+    char s;
+    int sortCheck = checkSort(array, arraySize);
+	if(sortCheck == 0){
+         s = 'Y';
+    }
+    else{
+        s = 'N';
+    }
 
     printf("TEST:     %s\n" , test);
-    printf("SORTED:   %c\n", sortCheck);
+    printf("SORTED:   %c\n", s);
     printf("SWAPS:    %i\n", swapCount);
     printf("COMPARES: %i\n", compareCount);
     swapCount = 0;
