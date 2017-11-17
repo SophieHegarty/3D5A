@@ -1,5 +1,5 @@
 //
-//  Task_10000.c
+//  Task_2.c
 //  Assignment_2
 //
 //  Created by Sophie Hegarty on 13/11/2017.
