@@ -96,7 +96,7 @@ void printArray(int arr[], int size)
 }
 
 void selectionSort(int arr[]){
-    int i, j, min_idx;
+    int i, j, min_value;
     
     // One by one move boundary of unsorted subarray
     for (i = 0; i < arraySize-1; i++){
@@ -105,11 +105,11 @@ void selectionSort(int arr[]){
         if(dEBUG == 1){
         printArray(arr, arraySize);
         printf("Inside Loop 1\n");
-        printf("%i\n ", j);
+        printf("%i\n ", i);
         }
         
         // Find the minimum element in unsorted array
-        min_idx = i;
+        min_value = i;
         for (j = i+1; j < arraySize - 1; j++){
             compareCount++;
             
@@ -119,12 +119,12 @@ void selectionSort(int arr[]){
                 printf("Inside Loop 2\n");
             }
             
-            if (arr[j] < arr[min_idx]){
+            if (arr[j] < arr[min_value]){
                 //compareCount++;
-                min_idx = j;            }
+                min_value = j;            }
         }
         // Swap the found minimum element with the first element
-        swap(&arr[min_idx], &arr[i]);
+        swap(&arr[min_value], &arr[i]);
     }
 }
 
@@ -150,7 +150,7 @@ void display(int array[], char test[]){
     if(dEBUG == 1){
         printArray(array, arraySize);
     }
-    printArray(array, arraySize);
+    //printArray(array, arraySize);
     char s;
     int sortCheck = checkSort(array, arraySize);
     if(sortCheck == 0){
