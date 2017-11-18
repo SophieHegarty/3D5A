@@ -64,19 +64,19 @@ void printArray(int arr[], int size){
 }
 
 //Lomuto partition 
-int partition (int arr[], int low, int high){ //uses last number as pivot{
-    int pivot = arr[high];    // pivot
+int partition (int array[], int low, int high){ //uses last number as pivot{
+    int pivot = array[high];    // pivot
     int i = (low - 1);  // Index of smaller element
     
     for (int j = low; j <= (high - 1); j++){
         // If current element is smaller than or
         // equal to pivot
-        if (arr[j] <= pivot){
+        if (array[j] <= pivot){
             compareCount++;
             i++;    // increment index of smaller element
 
 
-            swap(&arr[i], &arr[j]);
+            swap(&array[i], &array[j]);
 
             if(DEBUG == 1){
                 printf("Inside partition_1_1");
@@ -91,7 +91,7 @@ int partition (int arr[], int low, int high){ //uses last number as pivot{
         compareCount++;
     }
 
-    swap(&arr[i + 1], &arr[high]); //swap pivot and value after largest value smaller than pivot
+    swap(&array[i + 1], &array[high]); //swap pivot and value after largest value smaller than pivot
     if(DEBUG == 1){
         printf("Inside partition_2");
         printArray(arr, arraySize);
@@ -116,9 +116,6 @@ void quickSort(int arr[], int low, int high){
             printf("Inside quicksort");
             printArray(arr, arraySize);
         }
-
-        // Separately sort elements before
-        // partition and after partition, recurssively do each side
         quickSort(arr, low, partition_1 - 1);
         quickSort(arr, partition_1 + 1, high);
     }
