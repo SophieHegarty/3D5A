@@ -80,13 +80,13 @@ int partition (int array[], int low, int high){ //uses last number as pivot{
 
             if(DEBUG == 1){
                 printf("Inside partition_1_1");
-                printArray(arr, arraySize);
+                printArray(array, arraySize);
             }
         }
 
         if(DEBUG == 1){
             printf("Inside partition_1");
-            printArray(arr, arraySize);
+            printArray(array, arraySize);
         }
         compareCount++;
     }
@@ -94,19 +94,13 @@ int partition (int array[], int low, int high){ //uses last number as pivot{
     swap(&array[i + 1], &array[high]); //swap pivot and value after largest value smaller than pivot
     if(DEBUG == 1){
         printf("Inside partition_2");
-        printArray(arr, arraySize);
+        printArray(array, arraySize);
     }
-    char s = checkSort(arr, arraySize);
+    char s = checkSort(array, arraySize);
 
     return (i+1); // return place where pivot was placed
 }
 
-
-
-/* The main function that implements QuickSort
- arr[] --> Array to be sorted,
- low  --> Starting index,
- high  --> Ending index */
 void quickSort(int arr[], int low, int high){
     if (low < high)
     {
