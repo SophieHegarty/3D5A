@@ -50,8 +50,6 @@ void print_game( struct Game *g ) {
     printf("  %i %s %s %i\n", g->score, g->title, g->platform, g->releaseYear );
     
 }
-int swap_num = 0;
-int comparison = 0;
 
 /////////////////////////////////////// SORTING BELOW  ////////////////////////////////////////////////
 // A utility function to swap two elements
@@ -99,19 +97,19 @@ void swap(int *x,int *y){
     
 }
 
-int partition (struct Game *arr, int low, int high){ //uses last number as pivot{
-    int pivot = arr[high].score;    // pivot
+int partition (struct Game *array, int low, int high){ //uses last number as pivot{
+    int pivot = array[high].score;    // pivot
     int i = (low - 1);  // Index of smaller element
     
     for (int j = low; j <= (high - 1); j++){
         // If current element is smaller than or
         // equal to pivot
-        if (arr[j].score <= pivot){
+        if (array[j].score <= pivot){
             //compareCount++;
             i++;    // increment index of smaller element
             
             
-            swap(&arr[i].score, &arr[j].score);
+            swap(&array[i].score, &array[j].score);
             
             if(dEBUG == 1){
                 printf("Inside partition_1_1");
@@ -126,7 +124,7 @@ int partition (struct Game *arr, int low, int high){ //uses last number as pivot
         //compareCount++;
     }
     
-    swap(&arr[i + 1].score, &arr[high].score); //swap pivot and value after largest value smaller than pivot
+    swap(&array[i + 1].score, &array[high].score); //swap pivot and value after largest value smaller than pivot
     if(dEBUG == 1){
         printf("Inside partition_2");
         //printArray(arr, arraySize);
