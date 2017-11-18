@@ -119,7 +119,7 @@ int partition (struct Game *array, int low, int high){ //uses last number as piv
         
         if(dEBUG == 1){
             printf("Inside partition_1");
-            //printArray(arr, arraySize);
+            //printArray(array, arraySize);
         }
         //compareCount++;
     }
@@ -127,7 +127,7 @@ int partition (struct Game *array, int low, int high){ //uses last number as piv
     swap(&array[i + 1].score, &array[high].score); //swap pivot and value after largest value smaller than pivot
     if(dEBUG == 1){
         printf("Inside partition_2");
-        //printArray(arr, arraySize);
+        //printArray(array, arraySize);
     }
     //char s = checkSort(arr, arraySize);
     
