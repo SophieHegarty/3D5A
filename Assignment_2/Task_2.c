@@ -190,8 +190,8 @@ int main()
     
     display(arr_URV, "UniqueRandomValues");
     display(arr_RV, "RandomValues");
-    display(arr_ASL, "AscendingSortedList");
-    display(arr_DSL, "DescendingSortedList");
+    display(arr_DSL, "AscendingSortedList");
+    display(arr_ASL, "DescendingSortedList");
     display(arr_UL, "UniformList");
     
     return 0;
