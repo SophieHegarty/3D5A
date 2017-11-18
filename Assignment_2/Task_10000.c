@@ -19,17 +19,17 @@ int swapCount = 0;
 int DEBUG = 0;  //controls debug messages debug on if = 1; off if = 0
 
 /////////////////////////// FILL ARRAYS /////////////////////////
-void shuffle(int *arr, size_t n){
-    if (n > 1) 
+void shuffle(int *array, size_t num){
+    if (num > 1) 
     {
         size_t i;
         srand(time(NULL)); //set seed value
-        for (i = 0; i < n - 1; i++) 
+        for (i = 0; i < num - 1; i++) 
         {
-          size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
-          int t = arr[j];
-          arr[j] = arr[i];
-          arr[i] = t;
+          size_t j = i + rand() / (RAND_MAX / (num - i) + 1);
+          int t = array[j];
+          array[j] = array[i];
+          array[i] = t;
         }
     }
 }
