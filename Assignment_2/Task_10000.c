@@ -224,8 +224,8 @@ int main( int argc , char *argv[]){
 
     display(arr_URV, "UniqueRandomValues",  arraySize);
     display(arr_RV, "RandomValues", arraySize);
-    display(arr_ASL, "AscendingSortedList", arraySize);
-    display(arr_DSL, "DescendingSortedList",  arraySize);
+    display(arr_DSL, "AscendingSortedList", arraySize);
+    display(arr_ASL, "DescendingSortedList",  arraySize);
     display(arr_UL, "UniformList", arraySize);
 
     return 0;
