@@ -119,49 +119,43 @@ void printArray(int arr[], int size){
 }
 
 //Lomuto partition 
-int partition (int arr[], int low, int high){ //uses last number as pivot{
-    int pivot = arr[high];    // pivot
+int partition (int array[], int low, int high){ //uses last number as pivot{
+    int pivot = array[high];    // pivot
     int i = (low - 1);  // Index of smaller element
     
     for (int j = low; j <= (high - 1); j++){
         // If current element is smaller than or
         // equal to pivot
-        if (arr[j] <= pivot){
+        if (array[j] <= pivot){
             compareCount++;
             i++;    // increment index of smaller element
 
 
-            swap(&arr[i], &arr[j]);
+            swap(&array[i], &array[j]);
 
             if(DEBUG == 1){
                 printf("Inside partition_1_1");
-                printArray(arr, arraySize);
+                printArray(array, arraySize);
             }
         }
 
         if(DEBUG == 1){
             printf("Inside partition_1");
-            printArray(arr, arraySize);
+            printArray(array, arraySize);
         }
         compareCount++;
     }
 
-    swap(&arr[i + 1], &arr[high]); //swap pivot and value after largest value smaller than pivot
+    swap(&array[i + 1], &array[high]); //swap pivot and value after largest value smaller than pivot
     if(DEBUG == 1){
         printf("Inside partition_2");
-        printArray(arr, arraySize);
+        printArray(array, arraySize);
     }
-    char s = checkSort(arr, arraySize);
+    char s = checkSort(array, arraySize);
 
     return (i+1); // return place where pivot was placed
 }
 
-
-
-/* The main function that implements QuickSort
- arr[] --> Array to be sorted,
- low  --> Starting index,
- high  --> Ending index */
 void quickSort(int arr[], int low, int high){
     if (low < high)
     {
@@ -171,9 +165,6 @@ void quickSort(int arr[], int low, int high){
             printf("Inside quicksort");
             printArray(arr, arraySize);
         }
-
-        // Separately sort elements before
-        // partition and after partition, recurssively do each side
         quickSort(arr, low, partition_1 - 1);
         quickSort(arr, partition_1 + 1, high);
     }
