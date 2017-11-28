@@ -77,3 +77,26 @@ int  main ( int argc , char *argv[] ){
 
 
 }
+
+
+
+
+int vektor[10];    
+int random;
+int uniqueflag;
+int i, j
+
+for(i = 0; i < 10; i++) {
+     do {
+        /* Assume things are unique... we'll reset this flag if not. */
+        uniqueflag = 1;
+        random = rand() % 100+ 1;
+        /* This loop checks for uniqueness */
+        for (j = 0; j < i && uniqueflag == 1; j++) {
+           if (vektor[j] == random) {
+              uniqueflag = 0;
+           }
+        }
+     } while (uniqueflag != 1);
+     vektor[i] = random;
+}
