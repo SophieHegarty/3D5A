@@ -64,8 +64,8 @@ struct Tree_Node* tree_search(struct Tree_Node** root, char data){
 void tree_print_sorted(struct Tree_Node* root){
     if (root)
     {
-        print_postorder(root->left);
-        print_postorder(root->right);
+        tree_print_sorted(root->left);
+        tree_print_sorted(root->right);
         printf("%d\n",root->data);
     }
 
@@ -85,13 +85,15 @@ void tree_delete(struct Tree_Node* root){
 
 int  main ( int argc , char *argv[] ){
 
-    struct Tree_Node *ptr = NULL;
+    struct Tree_Node *root = NULL;
     char array[ARRAY_SIZE] = {'F', 'L', 'O', 'C', 'C', 
 'I', 'N', 'A', 'U', 'C', 'I', 'N', 'I', 'H', 'I', 'L', 'I', 'P', 'I', 'L','I', 'F', 'I', 'C', 'A', 'T', 'I', 'O', 'N'};
 
     for(int i = 0; i <29; i++){
-        tree_insert(ptr*, i);
+        tree_insert(&root, array[i]);
     }
+
+    tree_print_sorted(root);
     
 
 
@@ -100,7 +102,7 @@ int  main ( int argc , char *argv[] ){
 
 
 
-
+//https://gist.github.com/aaronjwood/2780f31768691b1d69ed
 /*int vektor[10];    
 int random;
 int uniqueflag;
