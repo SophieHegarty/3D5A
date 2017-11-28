@@ -13,58 +13,64 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-typedef struct Tree_Node Tree_Node;
+#define ARRAY_SIZE 29
 
-struct Tree_Node{
+struct  Tree_Node;
+struct  Tree_Node{
     char data;
-    Tree_Node* left, right;
+    struct Tree_Node *left, *right;
 };
 
-void tree_insert(Tree_Node** root, char data){
-    Tree_node *temp = NULL;
+void tree_insert(struct Tree_Node** root, char data){
+    struct Tree_Node *temp = NULL;
     
     if(!(*root)) {
-        temp = (Tree_node *)malloc(sizeof(node));
+        temp = (struct Tree_Node *)malloc(sizeof(struct Tree_Node));
         temp->left = temp->right = NULL;
-        temp->data = val;
+        temp->data = data;
         *root = temp;
         return;
     }
 
-    if(val < (*root)->data) {
-        insert(&(*root)->left, val);
+    if(data < (*root)->data) {
+        tree_insert(&(*root)->left, data);
      } 
-     else if(val > (*root)->data) {
-        insert(&(*root)->right, val);
+     else if(data > (*root)->data) {
+        tree_insert(&(*root)->right, data);
       }
     
 }
 
-Tree_Node* tree_search(Tree_Node** root, char data){
+struct Tree_Node* tree_search(struct Tree_Node** root, char data){
     if(!(*root)) {
         return NULL;
     }
     
-   if(val == (*root)->data) {
+   if(data == (*root)->data) {
         return *root;
    } 
-   else if(val < (*root)->data) {
-        search(&((*root)->left), val);
+   else if(data < (*root)->data) {
+        tree_search(&((*root)->left), data);
    } 
-   else if(val > (*root)->data){
-        search(&((*root)->right), val);
+   else if(data > (*root)->data){
+        tree_search(&((*root)->right), data);
   }
- 
+ //return root;
 }
 
-void tree_print_sorted(Tree_Node* root){
+void tree_print_sorted(struct Tree_Node* root){
+    if(root == NULL)
+    return;
+    printtreenode(root -> left);
+    printf("%d\n",root -> data);
+    printtreenode(root ->right);
 
 }
 
-void tree_delete(Tree_Node* root){
+void tree_delete(struct Tree_Node* root){
     if (root) {
-       deltree(root->left);
-       deltree(root->right);
+       tree_delete(root->left);
+       tree_delete(root->right);
        free(root);
   }
 }
@@ -75,23 +81,33 @@ void tree_delete(Tree_Node* root){
 
 int  main ( int argc , char *argv[] ){
 
+    struct Tree_Node *ptr = NULL;
+    char array[ARRAY_SIZE] = {'F', 'L', 'O', 'C', 'C', 
+'I', 'N', 'A', 'U', 'C', 'I', 'N', 'I', 'H', 'I', 'L', 'I', 'P', 'I', 'L','I', 'F', 'I', 'C', 'A', 'T', 'I', 'O', 'N'};
+
+    for(int i = 0; i <29; i++){
+        tree_insert(ptr*, i);
+    }
+    
+
+
 
 }
 
 
 
 
-int vektor[10];    
+/*int vektor[10];    
 int random;
 int uniqueflag;
 int i, j
 
 for(i = 0; i < 10; i++) {
      do {
-        /* Assume things are unique... we'll reset this flag if not. */
+
         uniqueflag = 1;
         random = rand() % 100+ 1;
-        /* This loop checks for uniqueness */
+
         for (j = 0; j < i && uniqueflag == 1; j++) {
            if (vektor[j] == random) {
               uniqueflag = 0;
@@ -99,4 +115,4 @@ for(i = 0; i < 10; i++) {
         }
      } while (uniqueflag != 1);
      vektor[i] = random;
-}
+}*/
