@@ -42,28 +42,32 @@ void tree_insert(struct Tree_Node** root, char data){
 }
 
 struct Tree_Node* tree_search(struct Tree_Node** root, char data){
-    if(!(*root)) {
+    if(!(*root))
+    {
         return NULL;
     }
-    
-   if(data == (*root)->data) {
-        return *root;
-   } 
-   else if(data < (*root)->data) {
+
+    if(data < (*root)->data)
+    {
         tree_search(&((*root)->left), data);
-   } 
-   else if(data > (*root)->data){
+    }
+    else if(data > (*root)->data)
+    {
         tree_search(&((*root)->right), data);
-  }
- //return root;
+    }
+    else if(data == (*root)->data)
+    {
+        return *root;
+    }
 }
 
 void tree_print_sorted(struct Tree_Node* root){
-    if(root == NULL)
-    return;
-    printtreenode(root -> left);
-    printf("%d\n",root -> data);
-    printtreenode(root ->right);
+    if (root)
+    {
+        print_postorder(root->left);
+        print_postorder(root->right);
+        printf("%d\n",root->data);
+    }
 
 }
 
