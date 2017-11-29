@@ -21,7 +21,7 @@ struct  Tree_Node{
     struct Tree_Node *left, *right;
 };
 
-void tree_insert(struct Tree_Node** root, char data){
+/*void tree_insert(struct Tree_Node** root, char data){
     struct Tree_Node *temp = NULL;
     
     if(!(*root)) {
@@ -39,6 +39,21 @@ void tree_insert(struct Tree_Node** root, char data){
         tree_insert(&(*root)->right, data);
       }
     
+}*/
+
+struct Tree_Node* tree_insert(struct Tree_Node *root, int data) {
+    if (root == NULL) {
+        root = (struct Tree_Node *)malloc(sizeof(struct Tree_Node));
+        root->data = data;
+        root->left = NULL;
+        root->right = NULL;
+    } else if (data < root->data) {
+        root->left = tree_insert(root->left, data);
+    } else {
+        root->right = tree_insert(root->right, data);
+    }
+
+    return root;
 }
 
 struct Tree_Node* tree_search(struct Tree_Node** root, char data){
@@ -86,18 +101,14 @@ void tree_delete(struct Tree_Node* root){
 int  main ( int argc , char *argv[] ){
 
     struct Tree_Node *root = NULL;
-    char array[ARRAY_SIZE] = {'F', 'L', 'O', 'C', 'C', 
-'I', 'N', 'A', 'U', 'C', 'I', 'N', 'I', 'H', 'I', 'L', 'I', 'P', 'I', 'L','I', 'F', 'I', 'C', 'A', 'T', 'I', 'O', 'N'};
+    char* data = "FLOCCINAUCINIHILIPILIFICATION";
 
-    for(int i = 0; i <29; i++){
-        tree_insert(&root, array[i]);
+    for(int i = 0; i <ARRAY_SIZE - 1; i++){
+        root = tree_insert(root, data[i]);
     }
 
     tree_print_sorted(root);
     
-
-
-
 }
 
 
