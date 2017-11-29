@@ -56,7 +56,7 @@ struct Tree_Node* tree_insert(struct Tree_Node *root, int data) {
     return root;
 }
 
-struct Tree_Node* tree_search(struct Tree_Node** root, char data){
+/*struct Tree_Node* tree_search(struct Tree_Node** root, char data){
     if(!(*root))
     {
         return NULL;
@@ -74,6 +74,20 @@ struct Tree_Node* tree_search(struct Tree_Node** root, char data){
     {
         return *root;
     }
+}*/
+
+struct node* search(struct node* root, int key)
+{
+    // Base Cases: root is null or key is present at root
+    if (root == NULL || root->key == key)
+       return root;
+    
+    // Key is greater than root's key
+    if (root->key < key)
+       return search(root->right, key);
+ 
+    // Key is smaller than root's key
+    return search(root->left, key);
 }
 
 void tree_print_sorted(struct Tree_Node* root){
