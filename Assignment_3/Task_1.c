@@ -94,8 +94,8 @@ void tree_print_sorted(struct Tree_Node* root){
     if (root)
     {
         tree_print_sorted(root->left);
+        printf("%c\n",root->data);
         tree_print_sorted(root->right);
-        printf("%d\n",root->data);
     }
     
 }
@@ -115,15 +115,15 @@ void tree_delete(struct Tree_Node* root){
 int  main ( int argc , char *argv[] ){
     
     struct Tree_Node *root = NULL;
-    char data[ARRAY_SIZE] = {"F","L","O","C","C","I","N","A","U","C","I","N","I","H","I","L","I","P","I","L","I","F","I","C","A","T","I","O","N"};
+    char *data[ARRAY_SIZE] = {"F","L","O","C","C","I","N","A","U","C","I","N","I","H","I","L","I","P","I","L","I","F","I","C","A","T","I","O","N"};
     for(int i = 0; i <ARRAY_SIZE - 1; i++){
-        printf("%c", data[i]);
-        root = tree_insert(root, data[i]);
+        printf("%c", *data[i]);
+        root = tree_insert(root, *data[i]);
     }
     
     tree_print_sorted(root);
     
-    char search;
+    //char search;
     
     
     printf("Enter letter: ");
