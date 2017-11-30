@@ -62,9 +62,9 @@ bstdb_init ( void ) {
 	return 1;
 }
 
-Books create_Node(Books* title , int word_count, int bookId){
+Books* create_Node(Books* title , int word_count, int bookId){
 
-        Books *root = (struct Books*)malloc(sizeof(struct Books));
+        Books* root = (struct Books*)malloc(sizeof(struct Books));
 		root-> title = title;
 		root -> word_count = word_count;
 		root -> bookID = bookId;
@@ -142,14 +142,14 @@ bstdb_add ( char *name, int word_count ) {
 	
 	while(check != 1){
 		bookID = doublehash(name, bookID);
-		check = duplicate(name, bookID);
+		check = duplicates(name, bookID);
 	}
 
 
 	if (root == NULL) {
 		root = create_Node(root, word_count, bookID);
 			return bookID;
-		} else if (Books.bookID < root->bookID) {
+		} else if (bookID < root->bookID) {
 
 			root->left = create_Node(root->left, word_count, bookID);
 			
@@ -164,7 +164,19 @@ bstdb_add ( char *name, int word_count ) {
 	return -1;
 }
 
-
+struct Books* tree_search(struct Books* root, char data)
+{
+    // Base Cases: root is null or key is present at root
+    if (root == NULL || root->data == data)
+        return root;
+    
+    // Key is greater than root's key
+    if (root->data < data)
+        return tree_search(root->right, data);
+    
+    // Key is smaller than root's key
+    return tree_search(root->left, data);
+}
 
 int
 bstdb_get_word_count ( int doc_id ) {
@@ -172,6 +184,8 @@ bstdb_get_word_count ( int doc_id ) {
 	// and return the word_count of the node with the corresponding doc_id.
 	//
 	// If the required node is not found, this function should return -1
+
+
 	return -1;
 }
 
