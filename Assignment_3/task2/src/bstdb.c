@@ -34,7 +34,26 @@
 // Otherwise the profiler will not be able to find them. If you think you
 // need more functionality than what is provided by these 6 functions, you
 // may write additional functions in this file.
+#define TITLE_SIZE 256
 
+typedef struct Books Books;
+struct Books {
+	char title[TITLE_SIZE];
+	int word_count;
+	int bookID;
+	Books *left, *right;
+
+};
+
+void create_Node(Books* root){
+	if (root == NULL) {
+        root = (struct Book*)malloc(sizeof(struct Book));
+	}
+	if (root == NULL) {
+        fputs("Error in malloc\n", stderr);
+        exit(1);
+    }
+}
 
 int
 bstdb_init ( void ) {
@@ -42,8 +61,52 @@ bstdb_init ( void ) {
 	// starts. Use it to allocate any memory you want to use or initialize 
 	// some globals if you need to. Function should return 1 if initialization
 	// was successful and 0 if something went wrong.
+
+
+	Books root* = NULL;
+
 	return 1;
 }
+
+int create_bookID(char* name){
+ int hash = 0;
+    while(*s)
+    {
+        hash = (hash + *s) % ARRAY_SIZE;
+        s++;
+    }
+    return hash;
+}
+
+int doublehash(char* name, bookId){
+	int hash = bookID; //modulous a prime number
+    while(*name)
+    {
+        hash = ((hash + *name) *31) % TITLE_SIZE;
+        name++;
+    }
+    return hash;
+}
+
+int duplicates(Books* root, int bookID){
+	int check = -1;
+
+	while(root ->bookID != bookID ){
+		if (root == NULL || root->bookID == bookID)
+			check = 1;
+			break;
+		// Key is greater than root's key
+		else if (root->bookID < bookID){
+			check = 1;
+		} else{
+		// Key is smaller than root's key
+			check = 1;
+		}
+		check = 0;
+	}
+	return check;
+}
+
 
 int
 bstdb_add ( char *name, int word_count ) {
@@ -61,6 +124,32 @@ bstdb_add ( char *name, int word_count ) {
 	//
 	// If something goes wrong and the data cannot be stored, this function
 	// should return -1. Otherwise it should return the ID of the new node
+	root = create_Node(root);
+	int bookID = create_bookID(name);
+	int check = -1;
+
+	
+	while(check != 1)
+		bookID = doublehash(name, bookID);
+		check = duplicate(name, bookID);
+	}
+
+	if (root == NULL) {
+			root = (struct Books *)malloc(sizeof(struct Books));
+			root-> Books.title[]= title;
+			root -> Books.word_count = word_count;
+			root -> Books.bookID = bookID;
+			root->left = NULL;
+			root->right = NULL;
+			return bookID;
+		} else if (Books.bookID < root->bookID) {
+			root->left = tree_insert(root->left, bookID);
+			return bookID;
+		} else {
+			root->right = tree_insert(root->right, BookID);
+			return bookID
+		}
+
 	return -1;
 }
 
@@ -109,4 +198,8 @@ bstdb_quit ( void ) {
 	// This function will run once (and only once) when the program ends. Use
 	// it to free any memory you allocated in the course of operating the
 	// database.
+	  if (root) {
+        tree_delete(root->left);
+        tree_delete(root->right);
+        free(root
 }
