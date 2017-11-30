@@ -1,6 +1,7 @@
 #include "bstdb.h"
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 // Write your submission in this file
 //
@@ -40,13 +41,14 @@
 
 typedef struct Books Books;
 struct Books {
-	char title[TITLE_SIZE];
+	char *title;
 	int word_count;
 	int bookID;
 	Books *left, *right;
 
 };
 
+Books *root;
 
 
 int
@@ -55,19 +57,25 @@ bstdb_init ( void ) {
 	// starts. Use it to allocate any memory you want to use or initialize 
 	// some globals if you need to. Function should return 1 if initialization
 	// was successful and 0 if something went wrong.
-	Books* root = NULL;
+	Books *root = NULL;
 
 	return 1;
 }
 
-void create_Node(Books* root){
-	if (root == NULL) {
-        root = (struct Books*)malloc(sizeof(struct Books));
-	}
-	if (root == NULL) {
+Books create_Node(Books* title , int word_count, int bookId){
+
+        Books *root = (struct Books*)malloc(sizeof(struct Books));
+		root-> title = title;
+		root -> word_count = word_count;
+		root -> bookID = bookId;
+		root->left = NULL;
+		root->right = NULL;
+
+	/*if (root == NULL) {
         printf("Error in malloc\n");
         exit(1);
-    }
+    }*/
+	return root;
 }
 
 int create_bookID(char* name){
@@ -90,6 +98,25 @@ int doublehash(char* name, int bookId){
     return hash;
 }
 
+int duplicates(Books* root, int bookID){
+	int check = -1;
+
+	while(root ->bookID != bookID ){
+		if (root == NULL || root->bookID == bookID){
+			check = 1;
+			break;
+		}
+		// Key is greater than root's key
+		else if (root->bookID < bookID){
+			check = 1;
+		} else{
+		// Key is smaller than root's key
+			check = 1;
+		}
+		check = 0;
+	}
+	return check;
+}
 
 
 int
@@ -108,7 +135,7 @@ bstdb_add ( char *name, int word_count ) {
 	//
 	// If something goes wrong and the data cannot be stored, this function
 	// should return -1. Otherwise it should return the ID of the new node
-	root = create_Node(root);
+	
 	int bookID = create_bookID(name);
 	int check = -1;
 
@@ -118,43 +145,26 @@ bstdb_add ( char *name, int word_count ) {
 		check = duplicate(name, bookID);
 	}
 
+
 	if (root == NULL) {
-			root = (struct Books *)malloc(sizeof(struct Books));
-			root-> Books.title[]= title;
-			root -> Books.word_count = word_count;
-			root -> Books.bookID = bookID;
-			root->left = NULL;
-			root->right = NULL;
+		root = create_Node(root, word_count, bookID);
 			return bookID;
 		} else if (Books.bookID < root->bookID) {
-			root->left = bstdb_add(root->left, bookID);
+
+			root->left = create_Node(root->left, word_count, bookID);
+			
 			return bookID;
 		} else {
-			root->right = bstdb_add(root->right, bookID);
+
+			root->right = create_Node(root->right,word_count, bookID);
+
 			return bookID;
 		}
 
 	return -1;
 }
 
-int duplicates(Books* root, int bookID){
-	int check = -1;
 
-	while(root ->bookID != bookID ){
-		if (root == NULL || root->bookID == bookID)
-			check = 1;
-			break;
-		// Key is greater than root's key
-		else if (root->bookID < bookID){
-			check = 1;
-		} else{
-		// Key is smaller than root's key
-			check = 1;
-		}
-		check = 0;
-	}
-	return check;
-}
 
 int
 bstdb_get_word_count ( int doc_id ) {
@@ -196,13 +206,15 @@ bstdb_stat ( void ) {
 	//    in the tree?
 }
 
+
 void
 bstdb_quit ( void ) {
 	// This function will run once (and only once) when the program ends. Use
 	// it to free any memory you allocated in the course of operating the
 	// database.
-	  if (root) {
+	  /*if (root) {
         tree_delete(root->left);
         tree_delete(root->right);
-        free(root
+        free(root)
+	  }*/
 }
