@@ -1,4 +1,6 @@
 #include "bstdb.h"
+#include <stddef.h>
+#include <stdio.h>
 
 // Write your submission in this file
 //
@@ -45,15 +47,7 @@ struct Books {
 
 };
 
-void create_Node(Books* root){
-	if (root == NULL) {
-        root = (struct Book*)malloc(sizeof(struct Book));
-	}
-	if (root == NULL) {
-        fputs("Error in malloc\n", stderr);
-        exit(1);
-    }
-}
+
 
 int
 bstdb_init ( void ) {
@@ -61,25 +55,33 @@ bstdb_init ( void ) {
 	// starts. Use it to allocate any memory you want to use or initialize 
 	// some globals if you need to. Function should return 1 if initialization
 	// was successful and 0 if something went wrong.
-
-
-	Books root* = NULL;
+	Books* root = NULL;
 
 	return 1;
 }
 
+void create_Node(Books* root){
+	if (root == NULL) {
+        root = (struct Books*)malloc(sizeof(struct Books));
+	}
+	if (root == NULL) {
+        printf("Error in malloc\n");
+        exit(1);
+    }
+}
+
 int create_bookID(char* name){
  int hash = 0;
-    while(*s)
+    while(*name)
     {
-        hash = (hash + *s) % ARRAY_SIZE;
-        s++;
+        hash = (hash + *name) % TITLE_SIZE;
+        name++;
     }
     return hash;
 }
 
-int doublehash(char* name, bookId){
-	int hash = bookID; //modulous a prime number
+int doublehash(char* name, int bookId){
+	int hash = bookId; //modulous a prime number
     while(*name)
     {
         hash = ((hash + *name) *31) % TITLE_SIZE;
@@ -88,24 +90,6 @@ int doublehash(char* name, bookId){
     return hash;
 }
 
-int duplicates(Books* root, int bookID){
-	int check = -1;
-
-	while(root ->bookID != bookID ){
-		if (root == NULL || root->bookID == bookID)
-			check = 1;
-			break;
-		// Key is greater than root's key
-		else if (root->bookID < bookID){
-			check = 1;
-		} else{
-		// Key is smaller than root's key
-			check = 1;
-		}
-		check = 0;
-	}
-	return check;
-}
 
 
 int
@@ -129,7 +113,7 @@ bstdb_add ( char *name, int word_count ) {
 	int check = -1;
 
 	
-	while(check != 1)
+	while(check != 1){
 		bookID = doublehash(name, bookID);
 		check = duplicate(name, bookID);
 	}
@@ -143,14 +127,33 @@ bstdb_add ( char *name, int word_count ) {
 			root->right = NULL;
 			return bookID;
 		} else if (Books.bookID < root->bookID) {
-			root->left = tree_insert(root->left, bookID);
+			root->left = bstdb_add(root->left, bookID);
 			return bookID;
 		} else {
-			root->right = tree_insert(root->right, BookID);
-			return bookID
+			root->right = bstdb_add(root->right, bookID);
+			return bookID;
 		}
 
 	return -1;
+}
+
+int duplicates(Books* root, int bookID){
+	int check = -1;
+
+	while(root ->bookID != bookID ){
+		if (root == NULL || root->bookID == bookID)
+			check = 1;
+			break;
+		// Key is greater than root's key
+		else if (root->bookID < bookID){
+			check = 1;
+		} else{
+		// Key is smaller than root's key
+			check = 1;
+		}
+		check = 0;
+	}
+	return check;
 }
 
 int
