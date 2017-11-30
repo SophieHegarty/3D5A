@@ -164,18 +164,18 @@ bstdb_add ( char *name, int word_count ) {
 	return -1;
 }
 
-struct Books* tree_search(struct Books* root, char data)
+struct Books* tree_search(struct Books* root, char bookId)
 {
     // Base Cases: root is null or key is present at root
-    if (root == NULL || root->data == data)
+    if (root == NULL || root->bookID == bookId)
         return root;
     
     // Key is greater than root's key
-    if (root->data < data)
-        return tree_search(root->right, data);
+    if (root->bookID < bookId)
+        return tree_search(root->right, bookId);
     
     // Key is smaller than root's key
-    return tree_search(root->left, data);
+    return tree_search(root->left, bookId);
 }
 
 int
@@ -184,6 +184,7 @@ bstdb_get_word_count ( int doc_id ) {
 	// and return the word_count of the node with the corresponding doc_id.
 	//
 	// If the required node is not found, this function should return -1
+	Books *root = root;
 
 
 	return -1;
