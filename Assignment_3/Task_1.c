@@ -109,13 +109,26 @@ void tree_delete(struct Tree_Node* root){
 }
 
 
-
+int search_control(struct Tree_Node* root, char search){
+    int x = -1;
+    if(tree_search(root, search) == NULL){
+        x = 0;
+        //printf("INSIDE NULL ROOT");
+    }
+    else{
+        //printf("INSIDE ROOT ROOT");
+        x = 1;
+    }
+    return x;
+}
 
 
 int  main ( int argc , char *argv[] ){
     
     struct Tree_Node *root = NULL;
+    
     char *data[ARRAY_SIZE] = {"F","L","O","C","C","I","N","A","U","C","I","N","I","H","I","L","I","P","I","L","I","F","I","C","A","T","I","O","N"};
+    
     for(int i = 0; i <ARRAY_SIZE - 1; i++){
         printf("%c", *data[i]);
         root = tree_insert(root, *data[i]);
@@ -123,34 +136,30 @@ int  main ( int argc , char *argv[] ){
     
     tree_print_sorted(root);
     
-    //char search;
+    char letter = 'C';
+    int searching = search_control(root, letter);
     
+    if(searching == 0){
+        printf("%c Not Found in Tree\n", letter);
+    }
+    else if(searching == 1){
+        printf("%c Found in Tree\n", letter);
+    }
     
-    printf("Enter letter: ");
-
+    letter = 'Z';
+    searching = search_control(root, letter);
     
+    if(searching == 0){
+        printf("%c Not Found in Tree\n", letter);
+    }
+    else if(searching == 1){
+        printf("%c Found in Tree\n", letter);
+    }
     
+        
+    tree_delete(root);
+        
+    
+    return 0;
 }
 
-
-
-//https://gist.github.com/aaronjwood/2780f31768691b1d69ed
-/*int vektor[10];
- int random;
- int uniqueflag;
- int i, j
- 
- for(i = 0; i < 10; i++) {
- do {
- 
- uniqueflag = 1;
- random = rand() % 100+ 1;
- 
- for (j = 0; j < i && uniqueflag == 1; j++) {
- if (vektor[j] == random) {
- uniqueflag = 0;
- }
- }
- } while (uniqueflag != 1);
- vektor[i] = random;
- }*/
