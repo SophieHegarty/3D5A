@@ -80,10 +80,10 @@ Books * create_book(char *name, int word, int id) {
     return b;
 }
 
-int create_ID(char* s){
-    int hash =0;
+int create_ID(char* s){  //seg fault with any number other than 32????????????????????
+    int hash = 0;
     while (*s) {
-        hash = (32*( hash+ *s))% 1000000; //segfault with 33??????????
+        hash = (32*( hash+ *s)) % 1000000; //segfault with 33??????????
         s++;
     }
     return hash;
@@ -93,7 +93,7 @@ int double_hash(char *s, int hashNumber){
     int hash = hashNumber; //modulous a prime number
     while(*s)
     {
-        hash = ((hash + *s) *31) % 1000000;
+        hash = ((hash + *s) *32) % 1000000;
         s++;
     }
     return hash;
@@ -102,11 +102,11 @@ int double_hash(char *s, int hashNumber){
 
 
 int bstdb_add ( char *name, int word_count ) {
-    add_count++;
+    add_count++; //everytime function is called add one to count
     int id = create_ID(name);
 
     Books * new_book = create_book(name, word_count, id);
-    if(root == NULL) {
+    if(root == NULL) { //if no root resent root is first node
         root = new_book;
         count++;
         return (root->book_id);
@@ -115,34 +115,40 @@ int bstdb_add ( char *name, int word_count ) {
     Books * curr = root;
     Books * prev = root;
     
-    while (curr != NULL) {
+    while (curr != NULL) { //while curr isnt the last node ( add to end of tree)
         prev = curr;
-        if (new_book->book_id > curr->book_id) {
+        if (new_book->book_id > curr->book_id) { //if new root > curr go right
             curr = curr->right;
         }
-        else if (new_book->book_id == curr->book_id) {
-            
-            //double hash shows segmentation fault
+        else if (new_book->book_id < curr->book_id) { //if new root < curr go left
+            curr = curr->left; 
+           
+        }
+        else if (new_book->book_id == curr->book_id){ //if ID's are equal change ID
+			 new_book -> book_id++;
+             id_regenerated++;
+
+			//double hash shows segmentation fault
             /*int new_id = double_hash(name, curr->book_id);
             new_book->book_id = new_id;*/
-            
-            new_book -> book_id++;
-            id_regenerated++;
-        }
-        else curr = curr->left;
+
+		}
+		
     }
     
-    if (new_book->book_id > prev->book_id) {
+    if (new_book->book_id > prev->book_id) { //if prev book < curr go right from prev and return node
         count++;
         prev->right = new_book;
         return (prev->right->book_id);
     }
-    else if (new_book->book_id < prev->book_id){
+    else if (new_book->book_id < prev->book_id){ //if prev book > curr go left from prev and return node
         prev->left = new_book;
         count++;
         return (prev->left->book_id);
     }
-    else return -1;
+    else{ //reutrn -1 if it didnt add to tree
+		return -1;
+	}
 
 }
 
@@ -201,24 +207,25 @@ void print_sorted(Books * root) {
     }
 }
 
-int max ( int a, int b) {
-    if ( a >= b){
-        return a;
+int max_height( int x, int y) { //finds max number between heights
+    if ( x >= y){
+        return x;
     }
-    else{ return b;}
+    else{ 
+		return y;
+	}
 }
 
-int height (Books * root) {
+int tree_height (Books * root) { //calculates height of tree recursively
     if (root == NULL)
         return 0;
     else {
-        int h = 1 + max(height(root->left), height(root->right));
+        int h = 1 + max_height(tree_height(root->left), tree_height(root->right));
         return h;
     }
 }
 
-int left_height;
-int right_height;
+int left_height, right_height;
 
 
 int check_tree(Books * root) {
@@ -227,13 +234,15 @@ int check_tree(Books * root) {
         return 1;
     }
     else {
-        left_height = height(root->left);
-        right_height = height(root->right);
+        left_height = tree_height(root->left); //calculate heights
+        right_height = tree_height(root->right);
     }
-    if (abs(left_height - right_height) <= 1 && check_tree(root->left) && check_tree(root->right)){
+
+    if (abs(left_height - right_height) <= 1 && check_tree(root->left) && check_tree(root->right)){ //check if heights are the same if so retur 1
         return 1;
     }
-    else{ return 0;
+    else{ 
+		return 0; //return 0 if not balanced
     }
 }
 
@@ -255,7 +264,7 @@ void bstdb_stat ( void ) {
     }
     
     //no of ids regenerated
-    printf("Number of ids regenerated: %i \n", id_regenerated);
+    //printf("Number of ids regenerated: %i \n", id_regenerated);
     
     //tree balanced?
     Books *curr = (Books*)malloc(sizeof(Books));
