@@ -1,8 +1,8 @@
 #include "bstdb.h"
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <ctype.h>
 // Write your submission in this file
 //
 // A main function and some profiling tools have already been set up to test
@@ -37,171 +37,260 @@
 // Otherwise the profiler will not be able to find them. If you think you
 // need more functionality than what is provided by these 6 functions, you
 // may write additional functions in this file.
-#define TITLE_SIZE 256
-
+#define Hash_size 10000000
 typedef struct Books Books;
+
 struct Books {
-    int bookID;
-    char *title;
+    int book_id;
+    char *name;
     int word_count;
-    
-    Books *left, *right;
-    
+    Books *left;
+    Books *right;
 };
 
+int nodes_search =0;
+int words_searched =0;
+int names_searched =0;
+int collisions =0;
+int count;
+int add_count;
 Books *root;
 
+int i=0;
 
-int
-bstdb_init ( void ) {
+int bstdb_init ( void ) {
+    if(1) {
+        root = NULL;
+        add_count = 0;
+        count = 0;
+        return 1;
+    }
+    else return 0;
     // This function will run once (and only once) when the database first
     // starts. Use it to allocate any memory you want to use or initialize
     // some globals if you need to. Function should return 1 if initialization
     // was successful and 0 if something went wrong.
-    Books *root = NULL;
-    
-    return 1;
+    //	return 1;
 }
 
-Books* create_Node(Books* title , int word_count, int bookId){
-    
-    Books* root = (struct Books*)malloc(sizeof(struct Books));
-    root-> title = title;
-    root -> word_count = word_count;
-    root -> bookID = bookId;
-    root->left = NULL;
-    root->right = NULL;
-    
-    /*if (root == NULL) {
-     printf("Error in malloc\n");
-     exit(1);
-     }*/
-    return root;
+Books * create_book(char *name, int word, int id) {
+    Books *b = (Books*)malloc(sizeof(Books));
+    b->book_id = id;
+    b->name = name;
+    b->word_count =word;
+    b->left = NULL;
+    b->right = NULL;
+    return b;
 }
 
-int create_bookID(char* name){
-    int hash = 0;
-    while(*name)
-    {
-        hash = (hash + *name) % TITLE_SIZE;
-        name++;
+int create_ID(char* s){  //djb2 algorithm uses 32
+    int hash =0;
+    while (*s) {
+        hash = (32*( hash+ *s))% Hash_size; // hash * 33
+        s++;
     }
     return hash;
 }
 
-int doublehash(char* name, int bookId){
-    int hash = bookId; //modulous a prime number
-    while(*name)
-    {
-        hash = ((hash + *name) *31) % TITLE_SIZE;
-        name++;
-    }
-    return hash;
-}
+/*
+ Books* insert(Books* curr, char *name, int word_count, int id) {
+ // printf("Got to insert function \n");
+	if (curr == NULL){
+ return create_book(name, word_count, id);
+	}
+	if (id < curr->book_id) {    //if its less than the root, move to the left
+ // curr = curr->left;
+ curr->left = insert(curr->left, name, word_count, id);
+	}
+	else if ( id >= curr->book_id) {   //if its greater than the root, move to the right
+ //  curr = curr->right;
+ curr->right = insert(curr->right, name, word_count, id);
+	}
+	return curr;
+ 
+ }
+ */
 
-int duplicates(Books* root, int bookID){
-    int check = -1;
+int bstdb_add ( char *name, int word_count ) {
+    add_count++;
+    int id = create_ID(name);
+    //int id = id_gen();
     
-    while(root ->bookID != bookID ){
-        if (root == NULL || root->bookID == bookID){
-            check = 1;
-            break;
+    Books * new_book = create_book(name, word_count, id);
+    if(root == NULL) {	//set root
+        
+        root = new_book;
+        count++;
+        return (root->book_id);
+    }
+    Books * curr = root;
+    Books * prev = root;
+    
+    while (curr != NULL) {
+        prev = curr;
+        if (new_book->book_id > curr->book_id) {
+            curr = curr->right;
         }
-        // Key is greater than root's key
-        else if (root->bookID < bookID){
-            check = 1;
-        } else{
-            // Key is smaller than root's key
-            check = 1;
+        else if (new_book->book_id == curr->book_id) {
+            new_book->book_id++;
+            collisions++;
         }
-        check = 0;
+        else curr = curr->left;
     }
-    return check;
+    
+    if (new_book->book_id > prev->book_id) {
+        prev->right = new_book;
+        count++;
+        return (prev->right->book_id);
+    }
+    else if (new_book->book_id < prev->book_id){
+        prev->left = new_book;
+        count++;
+        return (prev->left->book_id);
+    }
+    else return -1;
+
 }
 
 
-int
-bstdb_add ( char *name, int word_count ) {
-    // This function should create a new node in the binary search tree,
-    // populate it with the name and word_count of the arguments and store
-    // the result in the tree.
-    //
-    // This function should also generate and return an identifier that is
-    // unique to this document. A user can find the stored data by passing
-    // this ID to one of the two search functions below.
-    //
-    // How you generate this ID is up to you, but it must be an integer. Note
-    // that this ID should also form the keys of the nodes in your BST, so
-    // try to generate them in a way that will result in a balanced tree.
-    //
-    // If something goes wrong and the data cannot be stored, this function
-    // should return -1. Otherwise it should return the ID of the new node
-    
-    int bookID = create_bookID(name);
-    int check = -1;
-    
-    
-    while(check != 1){
-        bookID = doublehash(name, bookID);
-        check = duplicates(name, bookID);
+Books* tree_search(Books* curr, int id) {
+    if (id == curr->book_id) {   //if equal to root, print
+        return curr;
+    }
+    else if(id < curr->book_id && curr->left != NULL) { //if less than root, move left
+        nodes_search++;
+        return tree_search(curr->left, id);
+    }
+    else if (id > curr->book_id && curr->right != NULL) { //if greater than root, move right
+        nodes_search++;
+        return tree_search(curr->right, id);
+    }
+    else { //cant find data
+        return NULL;
     }
     
+}
+
+
+int bstdb_get_word_count ( int book_id ) {
+    words_searched++;
     
-    if (root == NULL) {
-        root = create_Node(root, word_count, bookID);
-        return bookID;
-    } else if (bookID < root->bookID) {
-        
-        root->left = create_Node(root->left, word_count, bookID);
-        
-        return bookID;
-    } else {
-        
-        root->right = create_Node(root->right,word_count, bookID);
-        
-        return bookID;
+    Books *book = (Books*)malloc(sizeof(Books));
+
+    book = tree_search(root, book_id);
+    
+    if (book->book_id == book_id) {
+        return (book->word_count);
     }
-    
-    return -1;
-}
-
-struct Books* tree_search(struct Books* root, char bookId)
-{
-    // Base Cases: root is null or key is present at root
-    if (root == NULL || root->bookID == bookId)
-        return root;
-    
-    // Key is greater than root's key
-    if (root->bookID < bookId)
-        return tree_search(root->right, bookId);
-    
-    // Key is smaller than root's key
-    return tree_search(root->left, bookId);
-}
-
-int
-bstdb_get_word_count ( int doc_id ) {
+    else return -1;
     // This is a search function. It should traverse the binary search tree
-    // and return the word_count of the node with the corresponding doc_id.
+    // and return the word_count of the node with the corresponding book_id.
     //
     // If the required node is not found, this function should return -1
-    Books *root = root;
-    
-    
-    return -1;
 }
 
-char*
-bstdb_get_name ( int doc_id ) {
+char* bstdb_get_name ( int book_id ) {
+    names_searched++;
+    Books *book = (Books*)malloc(sizeof(Books));
+
+    book = tree_search(root, book_id);
+    if (book != NULL) {
+        return (book->name);
+    }
+    else return NULL;
     // This is a search function. It should traverse the binary search tree
-    // and return the name of the node with the corresponding doc_id.
+    // and return the name of the node with the corresponding book_id.
     //
     // If the required node is not found, this function should return NULL or 0
-    return 0;
+    
 }
 
-void
-bstdb_stat ( void ) {
+void print_sorted(Books * root) {
+    if (root != NULL) {
+        print_sorted(root->left);
+        
+        printf("%i \t %s \n", root->book_id, root->name);
+        print_sorted(root->right);
+    }
+}
+
+int max ( int a, int b) {
+    if ( a >= b)
+        return a;
+    else return b;
+}
+
+int height (Books * curr) {
+    if (curr == NULL)
+        return 0;
+    else {
+        int h = 1 + max(height(curr->left), height(curr->right));
+        return h;
+    }
+}
+int left_h;
+int right_h;
+int Balanced(Books * curr) {
+    if (curr == NULL){ //empty then balanced
+        printf("This tree is empty \n");
+        return 1;
+    }
+    else {
+        left_h = height(curr->left);	//getting left height
+        right_h = height(curr->right);	//getting right height
+    }
+    if (abs(left_h - right_h) <= 1 && Balanced(curr->left) && Balanced(curr->right))
+        return 1;	//if balanced
+    else return 0;	//not balanced
+}
+
+void bigNlil(Books * l) {
+    Books *r = (Books*)malloc(sizeof(Books));
+    r = root;
+    if (r != NULL){ //empty then balanced
+        while(l->left != NULL) {
+            l = l->left;
+        }
+        while(r->right != NULL) {
+            r = r->left;
+        }
+        printf("left most id %i \n right most id %i \n", l->book_id, r->book_id);
+    }
+
+}
+
+void bstdb_stat ( void ) {
+
+    printf("Number of tree nodes added matches expected?  -> ");
+    if (count == add_count)
+        printf("Yes\n");
+    else printf("Nope\n");
+    
+    //average number of nodes passed to get to the searched one
+    double av_nodes_searched = (double)nodes_search/(words_searched + names_searched);
+    printf("The Average number of nodes traversed  -> %lf \n", av_nodes_searched);
+    
+    //Collisions in creating id's
+    printf("Number of collisions when generating id's  -> %i \n", collisions);
+    
+    //Testing if tree is balanced
+    Books *curr = (Books*)malloc(sizeof(Books));
+    curr = root;
+    int b = Balanced(curr);
+    
+    printf("\nIs the Tree Balanced?  -> ");
+    if (b==1) {
+        printf("Yes!! \n");
+        printf("Both sides have %i nodes\n", left_h);
+    }
+    else {
+        printf("Nope \n");
+        printf("The number of nodes on Left of the tree   -> %i \n", left_h);
+        printf("The number of nodes on Right of the tree  -> %i \n",right_h);
+    }
+    printf("Root info %i %s %i \n", root->book_id, root->name, root->word_count);
+
+    
     // Use this function to show off! It will be called once after the
     // profiler ends. The profiler checks for execution time and simple errors,
     // but you should use this function to demonstrate your own innovation.
@@ -216,21 +305,26 @@ bstdb_stat ( void ) {
     //    based on the number of insertions you performed?
     //
     //  + How many nodes on average did you need to traverse in order to find
-    //    a search result?
+    //    a search result? 
     //
     //  + Can you prove that there are no accidental duplicate document IDs
     //    in the tree?
 }
 
+void delete(Books* curr) {
+    if (curr != NULL) {
+        delete(curr->left);  //deletes left
+        delete(curr->right); //deletes right
+        free(curr);
+    }
+}
 
-void
-bstdb_quit ( void ) {
+void bstdb_quit ( void ) {
+    //Books *curr = (Books*)malloc(sizeof(Books));
+    //curr = root;
+    delete(root);
+    
     // This function will run once (and only once) when the program ends. Use
     // it to free any memory you allocated in the course of operating the
     // database.
-    /*if (root) {
-     tree_delete(root->left);
-     tree_delete(root->right);
-     free(root)
-     }*/
 }
