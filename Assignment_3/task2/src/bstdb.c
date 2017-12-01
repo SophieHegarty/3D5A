@@ -209,9 +209,10 @@ void print_sorted(Books * root) {
 }
 
 int max ( int a, int b) {
-    if ( a >= b)
+    if ( a >= b){
         return a;
-    else return b;
+    }
+    else{ return b;}
 }
 
 int height (Books * root) {
@@ -223,24 +224,23 @@ int height (Books * root) {
     }
 }
 
-int left_h;
-int right_h;
+int left_height;
+int right_height;
 
 
 int check_tree(Books * root) {
     
-    if (root == NULL){ //empty then balanced
-        printf("This tree is empty \n");
+    if (root == NULL){
         return 1;
     }
     else {
-        left_h = height(root->left);	//getting left height
-        right_h = height(root->right);	//getting right height
+        left_height = height(root->left);
+        right_height = height(root->right);
     }
-    if (abs(left_h - right_h) <= 1 && check_tree(root->left) && check_tree(root->right)){
-        return 1;	//if check_tree
+    if (abs(left_height - right_height) <= 1 && check_tree(root->left) && check_tree(root->right)){
+        return 1;
     }
-    else{ return 0;	//not balanced
+    else{ return 0;
     }
 }
 
@@ -248,9 +248,11 @@ int check_tree(Books * root) {
 
 void bstdb_stat ( void ) {
     
+    //comparisions
     double av_nodes_searched = (double)comparision/(w_count + n_count);
     printf("Avg comparisions per search: %lf \n", av_nodes_searched);
     
+    //compare no of books added and number of books
     printf("List size matches expected: ");
     if (count == add_count){
         printf("Y\n");
@@ -259,7 +261,7 @@ void bstdb_stat ( void ) {
         printf("N\n");
     }
     
-
+    //no of ids regenerated
     printf("Number of ids regenerated: %i \n", id_regenerated);
     
     //tree balanced?
@@ -270,49 +272,26 @@ void bstdb_stat ( void ) {
     printf("Tree Balanced: ");
     if (b==1) {
         printf("Yes\n");
-        printf("Both sides have %i nodes\n", left_h);
+        printf("Both sides have %i nodes\n", left_height);
     }
     else {
         printf("N \n");
-        printf("No. of nodes on Left of tree: %i \n", left_h);
-        printf("No. of nodes on Right of  tree: %i \n",right_h);
+        printf("No. of nodes on Left of tree: %i \n", left_height);
+        printf("No. of nodes on Right of  tree: %i \n",right_height);
     }
 
     
-    // Use this function to show off! It will be called once after the
-    // profiler ends. The profiler checks for execution time and simple errors,
-    // but you should use this function to demonstrate your own innovation.
-    //
-    // Suggestions for things you might want to demonstrate are given below,
-    // but in general what you choose to show here is up to you. This function
-    // counts for marks so make sure it does something interesting or useful.
-    //
-    //  + Check if your tree is balanced and print the result
-    //
-    //  + Does the number of nodes in the tree match the number you expect
-    //    based on the number of insertions you performed?
-    //
-    //  + How many nodes on average did you need to traverse in order to find
-    //    a search result? 
-    //
-    //  + Can you prove that there are no accidental duplicate document IDs
-    //    in the tree?
 }
 
-void delete(Books* curr) {
-    if (curr != NULL) {
-        delete(curr->left);  //deletes left
-        delete(curr->right); //deletes right
-        free(curr);
+void delete(Books* root) {
+    if (root != NULL) {
+        delete(root->left);
+        delete(root->right);
+        free(root);
     }
 }
 
 void bstdb_quit ( void ) {
-    //Books *curr = (Books*)malloc(sizeof(Books));
-    //curr = root;
     delete(root);
     
-    // This function will run once (and only once) when the program ends. Use
-    // it to free any memory you allocated in the course of operating the
-    // database.
 }
