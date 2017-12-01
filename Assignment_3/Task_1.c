@@ -135,25 +135,25 @@ int  main ( int argc , char *argv[] ){
     }
     
     tree_print_sorted(root);
-    
-    char letter = 'C';
-    int searching = search_control(root, letter);
-    
-    if(searching == 0){
-        printf("%c Not Found in Tree\n", letter);
-    }
-    else if(searching == 1){
-        printf("%c Found in Tree\n", letter);
-    }
-    
-    letter = 'Z';
-    searching = search_control(root, letter);
+    char randomletter = 'A' + (random() % 26);
+    //char letter = 'C';
+    int searching = search_control(root, randomletter);
     
     if(searching == 0){
-        printf("%c Not Found in Tree\n", letter);
+        printf("%c Not Found in Tree\n", randomletter);
     }
     else if(searching == 1){
-        printf("%c Found in Tree\n", letter);
+        printf("%c Found in Tree\n", randomletter);
+    }
+    
+   char randomletter_2 = 'Z' - (random() % 26);;
+    searching = search_control(root, randomletter_2);
+    
+    if(searching == 0){
+        printf("%c Not Found in Tree\n",randomletter_2);
+    }
+    else if(searching == 1){
+        printf("%c Found in Tree\n", randomletter_2);
     }
     
         
