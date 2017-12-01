@@ -95,7 +95,7 @@ void tree_print_sorted(struct Tree_Node* root){
     if (root)
     {
         tree_print_sorted(root->left);
-        printf("%c\n",root->data);
+        printf("%c ",root->data);
         tree_print_sorted(root->right);
     }
     
@@ -130,16 +130,19 @@ int  main ( int argc , char *argv[] ){
     
     char *data[ARRAY_SIZE] = {"F","L","O","C","C","I","N","A","U","C","I","N","I","H","I","L","I","P","I","L","I","F","I","C","A","T","I","O","N"};
     
+    printf("UNSORTED: ");
     for(int i = 0; i <ARRAY_SIZE - 1; i++){
-        printf("%c", *data[i]);
+        printf("%c ", *data[i]);
         root = tree_insert(root, *data[i]);
     }
-
+    printf("\n");
     time_t t;
 
     srand((unsigned) time(&t));
-    
+    printf("Sorted: ");
     tree_print_sorted(root);
+    printf("\n");
+
     char randomletter = 'A' + (rand() % 26);
     //char letter = 'C';
     int searching = search_control(root, randomletter);
