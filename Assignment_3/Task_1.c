@@ -12,6 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define ARRAY_SIZE 29
 
@@ -133,9 +134,13 @@ int  main ( int argc , char *argv[] ){
         printf("%c", *data[i]);
         root = tree_insert(root, *data[i]);
     }
+
+    time_t t;
+
+    srand((unsigned) time(&t));
     
     tree_print_sorted(root);
-    char randomletter = 'A' + (random() % 26);
+    char randomletter = 'A' + (rand() % 26);
     //char letter = 'C';
     int searching = search_control(root, randomletter);
     
