@@ -37,7 +37,7 @@
 // Otherwise the profiler will not be able to find them. If you think you
 // need more functionality than what is provided by these 6 functions, you
 // may write additional functions in this file.
-#define Hash_size 1000000
+
 typedef struct Books Books;
 
 struct Books {
@@ -80,10 +80,10 @@ Books * create_book(char *name, int word, int id) {
     return b;
 }
 
-int create_ID(char* s){  //djb2 algorithm uses 32
+int create_ID(char* s){
     int hash =0;
     while (*s) {
-        hash = (32*( hash+ *s))% Hash_size; // hash * 33
+        hash = (32*( hash+ *s))% 1000000; //segfault with 33??????????
         s++;
     }
     return hash;
@@ -93,7 +93,7 @@ int double_hash(char *s, int hashNumber){
     int hash = hashNumber; //modulous a prime number
     while(*s)
     {
-        hash = ((hash + *s) *31) % Hash_size;
+        hash = ((hash + *s) *31) % 1000000;
         s++;
     }
     return hash;
@@ -159,7 +159,7 @@ Books* tree_search(Books* root, int id) {
         comparision++;
         return tree_search(root->right, id);
     }
-    else { //cant find data
+    else {
         return NULL;
     }
     
@@ -177,10 +177,7 @@ int bstdb_get_word_count ( int book_id ) {
         return (book->word_count);
     }
     else return -1;
-    // This is a search function. It should traverse the binary search tree
-    // and return the word_count of the node with the corresponding book_id.
-    //
-    // If the required node is not found, this function should return -1
+
 }
 
 char* bstdb_get_name ( int book_id ) {
@@ -192,10 +189,6 @@ char* bstdb_get_name ( int book_id ) {
         return (book->name);
     }
     else return NULL;
-    // This is a search function. It should traverse the binary search tree
-    // and return the name of the node with the corresponding book_id.
-    //
-    // If the required node is not found, this function should return NULL or 0
     
 }
 
