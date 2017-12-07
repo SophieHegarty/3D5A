@@ -70,6 +70,106 @@ struct graph {
     struct vertex *vertices; // pointer to all nodes in the graph
 };
 
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//https://www.programiz.com/dsa/graph-bfs
+struct queue {
+    int items[SIZE];
+    int front;
+    int rear;
+};
+
+struct queue* createQueue();
+void enqueue(struct queue* q, int);
+int dequeue(struct queue* q);
+void display(struct queue* q);
+int isEmpty(struct queue* q);
+void printQueue(struct queue* q);
+
+void bfs(struct Graph* graph, int startVertex) {
+
+    struct queue* q = createQueue();
+    
+    graph->visited[startVertex] = 1;
+    enqueue(q, startVertex);
+    
+    while(!isEmpty(q)){
+        printQueue(q);
+        int currentVertex = dequeue(q);
+        printf("Visited %d\n", currentVertex);
+    
+       struct node* temp = graph->adjLists[currentVertex];
+    
+       while(temp) {
+            int adjVertex = temp->vertex;
+
+            if(graph->visited[adjVertex] == 0){
+                graph->visited[adjVertex] = 1;
+                enqueue(q, adjVertex);
+            }
+            temp = temp->next;
+       }
+    }
+}
+ 
+struct queue* createQueue() {
+    struct queue* q = malloc(sizeof(struct queue));
+    q->front = -1;
+    q->rear = -1;
+    return q;
+}
+
+
+int isEmpty(struct queue* q) {
+    if(q->rear == -1) 
+        return 1;
+    else 
+        return 0;
+}
+
+void enqueue(struct queue* q, int value){
+    if(q->rear == SIZE-1)
+        printf("\nQueue is Full!!");
+    else {
+        if(q->front == -1)
+            q->front = 0;
+        q->rear++;
+        q->items[q->rear] = value;
+    }
+}
+
+int dequeue(struct queue* q){
+    int item;
+    if(isEmpty(q)){
+        printf("Queue is empty");
+        item = -1;
+    }
+    else{
+        item = q->items[q->front];
+        q->front++;
+        if(q->front > q->rear){
+            printf("Resetting queue");
+            q->front = q->rear = -1;
+        }
+    }
+    return item;
+}
+
+void printQueue(struct queue *q) {
+    int i = q->front;
+
+    if(isEmpty(q)) {
+        printf("Queue is empty");
+    } else {
+        printf("\nQueue contains \n");
+        for(i = q->front; i < q->rear + 1; i++) {
+                printf("%d ", q->items[i]);
+        }
+    }    
+}
+///////////////////////////////////////////////////////////////////////
 // Functions which manipulate vertices. 
 
 struct vertex* vertex_new      ( char id );
@@ -121,6 +221,7 @@ main(int argc, char *argv[]) {
 
     // Do stuff
     graph_print(graph);
+    bfs(graph, 0);
 
     // terminate
     graph_free(graph);
@@ -251,7 +352,44 @@ graph_add_vertex ( struct graph *g, char id ) {
     // First make sure that we've been given a graph to operate on
     if (!g) { return 0; }
     // Make sure the graph is not full
-    if (g->num_vertices >= g->max_vertices) { return 0; }
+    if (g->num_vertices >= g->max_vertices) { return 0; }void Graph::BFS(int s)
+{
+    // Mark all the vertices as not visited
+    bool *visited = new bool[V];
+    for(int i = 0; i < V; i++)
+        visited[i] = false;
+ 
+    // Create a queue for BFS
+    list<int> queue;
+ 
+    // Mark the current node as visited and enqueue it
+    visited[s] = true;
+    queue.push_back(s);
+ 
+    // 'i' will be used to get all adjacent
+    // vertices of a vertex
+    list<int>::iterator i;
+ 
+    while(!queue.empty())
+    {
+        // Dequeue a vertex from queue and print it
+        s = queue.front();
+        cout << s << " ";
+        queue.pop_front();
+ 
+        // Get all adjacent vertices of the dequeued
+        // vertex s. If a adjacent has not been visited, 
+        // then mark it visited and enqueue it
+        for (i = adj[s].begin(); i != adj[s].end(); ++i)
+        {
+            if (!visited[*i])
+            {
+                visited[*i] = true;
+                queue.push_back(*i);
+            }
+        }
+    }
+}
 
     // Check to see if the vertex is already in the graph    
     struct vertex *v = graph_get_vertex(g, id);
@@ -303,3 +441,59 @@ graph_free ( struct graph *g ) {
         free(g);
     }
 }
+
+/////////////////////////////////
+void struct Graph BFS(int s)
+{
+    // Mark all the vertices as not visited
+    bool *visited = new bool[V];
+    for(int i = 0; i < V; i++)
+        visited[i] = false;
+ 
+    // Create a queue for BFS
+    list<int> queue;
+ 
+    // Mark the current node as visited and enqueue it
+    visited[s] = true;
+    queue.push_back(s);
+ 
+    // 'i' will be used to get all adjacent
+    // vertices of a vertex
+    list<int>::iterator i;
+ 
+    while(!queue.empty())
+    {
+        // Dequeue a vertex from queue and print it
+        s = queue.front();
+        cout << s << " ";
+        queue.pop_front();
+ 
+        // Get all adjacent vertices of the dequeued
+        // vertex s. If a adjacent has not been visited, 
+        // then mark it visited and enqueue it
+        for (i = adj[s].begin(); i != adj[s].end(); ++i)
+        {
+            if (!visited[*i])
+            {
+                visited[*i] = true;
+                queue.push_back(*i);
+            }
+        }
+    }
+}
+
+BFS (G, s)                   //Where G is the graph and s is the source node
+      let Q be queue.
+      Q.enqueue( s ) //Inserting s in queue until all its neighbour vertices are marked.
+
+      mark s as visited.
+      while ( Q is not empty)
+           //Removing that vertex from queue,whose neighbour will be visited now
+           v  =  Q.dequeue( )
+
+          //processing all the neighbours of v  
+          for all neighbours w of v in Graph G
+               if w is not visited 
+                        Q.enqueue( w )             //Stores w in Q to further visit its neighbour
+                        mark w as visited.
+//https://www.hackerearth.com/practice/algorithms/graphs/breadth-first-search/tutorial/
