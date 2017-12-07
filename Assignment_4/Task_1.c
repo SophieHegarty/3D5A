@@ -62,12 +62,15 @@ struct vertex {
     // Maybe it's time for another struct?
     char edges[MAX_EDGES];
     int num_edges;
+    struct vertex* next;
 };
 
 struct graph {
     int max_vertices;        // Maximum size of the graph. Do we need a limit?
     int num_vertices;        // current size of the graph
     struct vertex *vertices; // pointer to all nodes in the graph
+    int *visited; //addded new
+    struct vertex** adjLists; //added new
 };
 
 
@@ -76,7 +79,7 @@ struct graph {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //https://www.programiz.com/dsa/graph-bfs
 struct queue {
-    int items[SIZE];
+    int items[MAX_EDGES];
     int front;
     int rear;
 };
@@ -88,7 +91,7 @@ void display(struct queue* q);
 int isEmpty(struct queue* q);
 void printQueue(struct queue* q);
 
-void bfs(struct Graph* graph, int startVertex) {
+void bfs(struct graph* graph, int startVertex) {
 
     struct queue* q = createQueue();
     
@@ -100,10 +103,10 @@ void bfs(struct Graph* graph, int startVertex) {
         int currentVertex = dequeue(q);
         printf("Visited %d\n", currentVertex);
     
-       struct node* temp = graph->adjLists[currentVertex];
+       struct vertex* temp = graph->adjLists[currentVertex];
     
        while(temp) {
-            int adjVertex = temp->vertex;
+            int adjVertex = temp->num_edges;
 
             if(graph->visited[adjVertex] == 0){
                 graph->visited[adjVertex] = 1;
@@ -130,7 +133,7 @@ int isEmpty(struct queue* q) {
 }
 
 void enqueue(struct queue* q, int value){
-    if(q->rear == SIZE-1)
+    if(q->rear == MAX_EDGES-1)
         printf("\nQueue is Full!!");
     else {
         if(q->front == -1)
@@ -352,7 +355,7 @@ graph_add_vertex ( struct graph *g, char id ) {
     // First make sure that we've been given a graph to operate on
     if (!g) { return 0; }
     // Make sure the graph is not full
-    if (g->num_vertices >= g->max_vertices) { return 0; }void Graph::BFS(int s)
+    if (g->num_vertices >= g->max_vertices) { return 0; }void Graph BFS(int s);
 {
     // Mark all the vertices as not visited
     bool *visited = new bool[V];
@@ -443,57 +446,3 @@ graph_free ( struct graph *g ) {
 }
 
 /////////////////////////////////
-void struct Graph BFS(int s)
-{
-    // Mark all the vertices as not visited
-    bool *visited = new bool[V];
-    for(int i = 0; i < V; i++)
-        visited[i] = false;
- 
-    // Create a queue for BFS
-    list<int> queue;
- 
-    // Mark the current node as visited and enqueue it
-    visited[s] = true;
-    queue.push_back(s);
- 
-    // 'i' will be used to get all adjacent
-    // vertices of a vertex
-    list<int>::iterator i;
- 
-    while(!queue.empty())
-    {
-        // Dequeue a vertex from queue and print it
-        s = queue.front();
-        cout << s << " ";
-        queue.pop_front();
- 
-        // Get all adjacent vertices of the dequeued
-        // vertex s. If a adjacent has not been visited, 
-        // then mark it visited and enqueue it
-        for (i = adj[s].begin(); i != adj[s].end(); ++i)
-        {
-            if (!visited[*i])
-            {
-                visited[*i] = true;
-                queue.push_back(*i);
-            }
-        }
-    }
-}
-
-BFS (G, s)                   //Where G is the graph and s is the source node
-      let Q be queue.
-      Q.enqueue( s ) //Inserting s in queue until all its neighbour vertices are marked.
-
-      mark s as visited.
-      while ( Q is not empty)
-           //Removing that vertex from queue,whose neighbour will be visited now
-           v  =  Q.dequeue( )
-
-          //processing all the neighbours of v  
-          for all neighbours w of v in Graph G
-               if w is not visited 
-                        Q.enqueue( w )             //Stores w in Q to further visit its neighbour
-                        mark w as visited.
-//https://www.hackerearth.com/practice/algorithms/graphs/breadth-first-search/tutorial/
