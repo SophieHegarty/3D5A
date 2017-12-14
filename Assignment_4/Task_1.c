@@ -18,7 +18,10 @@ struct Vertex* lstVertices[MAX];
 //adjacency matrix
 int adjMatrix[MAX][MAX];
 
-//stack functions
+//vertex count
+int vertexCount = 0;
+
+//stack functions for dfs
 
 void push(int item) {
     stack[++top] = item;
@@ -28,7 +31,7 @@ int pop() {
     return stack[top--];
 }
 
-int peek() {
+int topStack() {
     return stack[top];
 }
 
@@ -36,25 +39,12 @@ bool isStackEmpty() {
     return top == -1;
 }
 
-
-//queue variables
+//queue variables for bfs
 
 int queue[MAX];
 int rear = -1;
 int front = 0;
 int queueItemCount = 0;
-
-//graph variables
-
-//array of vertices
-struct Vertex* lstVertices[MAX];
-
-//adjacency matrix
-int adjMatrix[MAX][MAX];
-
-//vertex count
-int vertexCount = 0;
-
 
 //queue functions
 
@@ -119,10 +109,10 @@ void breadthFirstSearch() {
     int unvisitedVertex;
     
     while(!isQueueEmpty()) {
-        //get the unvisited vertex of vertex which is at front of the queue
+        //get the unvisited vertex, ie front of queue
         int tempVertex = removeData();
         
-        //no adjacent vertex found
+        //no vertex found
         while((unvisitedVertex = getAdjUnvisitedVertex(tempVertex)) != -1) {
             lstVertices[unvisitedVertex]->visited = true;
             displayVertex(unvisitedVertex);
@@ -153,7 +143,7 @@ void depthFirstSearch() {
 
    while(!isStackEmpty()) {
       //get the unvisited vertex of vertex which is at top of the stack
-      int unvisitedVertex = getAdjUnvisitedVertex(peek());
+      int unvisitedVertex = getAdjUnvisitedVertex(topStack());
 
       //no adjacent vertex found
       if(unvisitedVertex == -1) {
@@ -186,7 +176,7 @@ int main() {
    addVertex('C');   // 2
    addVertex('D');   // 3
    addVertex('E');   // 4
-   addVertex('F');   //5
+   addVertex('F');   // 5
  
    addEdge(0, 1);    // A - B
    addEdge(0, 3);    // A - B
@@ -204,6 +194,15 @@ int main() {
     
     addEdge(5, 2);    // C - D
     
+    
+    printf("A B C D E F\n");
+
+    for(i = 0; i<MAX;i++){
+        for(j = 0; j<MAX;j++){
+         printf("%i ", adjMatrix[i][j]);
+        }
+        printf("\n");
+    }
 
    printf("Depth First Search: ");
 
@@ -211,7 +210,8 @@ int main() {
     printf("\nBreadth First Search: ");
     
     breadthFirstSearch();
-
+    printf("\n");
+    
    return 0;   
 }
 
